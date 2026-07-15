@@ -1,0 +1,3401 @@
+/* =============================================
+   SOLLO PILATES — LANDING PAGE
+   Paleta: #f8f9fb (fundo) | #1c1c1c (texto) | #F06F00 (destaque) | #00d970 (CTA)
+   8-Point Grid System | UX Typography Scale
+   ============================================= */
+
+/* ---------- FONTES (auto-hospedadas em /fonts, sem depender do Google Fonts) ----------
+   2026-07-15: antes carregadas via <link> pro CDN do Google (fonts.googleapis.com), que
+   envia o IP do visitante pro Google a cada carregamento — trocado por arquivos .woff2
+   locais (só subset "latin", que já cobre todos os acentos do português: á é í ó ú ã õ
+   â ê ô ç, faixa U+0000-00FF) pra não depender de terceiro nem transferir dado de
+   visitante pra fora do site. Mesmos pesos que já estavam em uso antes (conferir no
+   próprio CSS: Roboto 300/400/500/600/700, Montserrat 300/500/600/700/800/900).
+   font-display:swap mantido (mesmo comportamento de antes: mostra texto com fonte de
+   fallback imediatamente, troca pra fonte real assim que o arquivo termina de baixar). */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('fonts/roboto-300.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/roboto-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/roboto-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/roboto-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/roboto-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('fonts/montserrat-300.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/montserrat-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/montserrat-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/montserrat-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('fonts/montserrat-800.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('fonts/montserrat-900.woff2') format('woff2');
+}
+
+/* ---------- RESET & BASE ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* --- Cores --- */
+  --page-bg:     #f8f9fb;
+  --card-bg:     #ffffff;
+  --orange:      #F06F00;
+  --orange-light:#f5a535;
+  --green:       #00d970;
+  --green-dark:  #00b85e;
+  --black:       #1c1c1c;
+  --text:        #1c1c1c;
+  --gray:        #6b7280;
+  --gray-light:  #e5e7eb;
+  --teal:        #365470;
+  --font-sans:   'Roboto', system-ui, sans-serif;
+  --font-serif:  'Montserrat', system-ui, sans-serif;
+  --transition:  0.3s ease;
+
+  /* --- Border-radius (escala consolidada) --- */
+  --radius:      8px;    /* elementos pequenos (inputs, badges, ícones quadrados) */
+  --radius-md:   16px;   /* cards e painéis (o mais comum no site) */
+  --radius-pill: 999px;  /* botões e elementos em formato de pílula */
+
+  /* --- Sombras (escala consolidada) --- */
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.08);   /* hover sutil / elementos pequenos */
+  --shadow:      0 4px 24px rgba(0,0,0,0.07);  /* elevação padrão de cards */
+  --shadow-lg:   0 8px 40px rgba(0,0,0,0.12);  /* cards em destaque / hover elevado */
+
+  /* --- Alturas de botão (múltiplos de 8, escala UX) --- */
+  --btn-height:    3rem;    /* 48px — botão padrão (mínimo recomendado de toque) */
+
+  /* --- Line-height (ritmo tipográfico, 4 categorias) --- */
+  --lh-tight:   1.2;   /* títulos grandes (h1/h2) */
+  --lh-heading: 1.4;   /* títulos menores (h3/h4) */
+  --lh-body:    1.5;   /* corpo de texto / UI */
+  --lh-relaxed: 1.75;  /* parágrafos longos (respostas de FAQ, textos descritivos) */
+
+  /* --- Escala tipográfica UX (base: 1rem = 16px) --- */
+  --fs-xs:   0.75rem;    /* 12px — captions / labels */
+  --fs-sm:   0.875rem;   /* 14px — textos secundários */
+  --fs-base: 1rem;       /* 16px — corpo principal   */
+  --fs-h3:   1.5rem;     /* 24px — h3                */
+  --fs-h1:   2.5rem;     /* 40px — h1                */
+
+  /* --- 8-Point Grid (espaçamento) --- */
+  --sp-1:  0.25rem;  /* 4px  */
+  --sp-2:  0.5rem;   /* 8px  */
+  --sp-3:  0.75rem;  /* 12px */
+  --sp-4:  1rem;     /* 16px */
+  --sp-5:  1.5rem;   /* 24px */
+  --sp-6:  2rem;     /* 32px */
+  --sp-7:  2.5rem;   /* 40px */
+  --sp-8:  3rem;     /* 48px */
+  --sp-9:  4rem;     /* 64px */
+  --sp-10: 5rem;     /* 80px */
+  --sp-11: 6rem;     /* 96px */
+  --sp-12: 7rem;     /* 112px */
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--text);
+  background: var(--page-bg);
+  line-height: var(--lh-body);
+  overflow-x: clip; /* "clip" não cria scroll-container — preserva position:sticky nos filhos */
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  /* Obstáculo básico contra "salvar imagem" casual (2026-07-15, pedido do usuário) —
+     não é proteção de verdade (não impede print de tela nem inspecionar elemento),
+     ver bloco de contextmenu/dragstart em script.js pro resto do mecanismo e o aviso
+     completo sobre o que isso NÃO garante. */
+  -webkit-user-drag: none;       /* impede arrastar a imagem pra fora da aba (Safari/Chrome) */
+  -webkit-touch-callout: none;   /* impede o menu de "Salvar Imagem" do toque longo no iOS */
+  user-select: none;             /* impede selecionar a imagem como se fosse texto */
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* ---------- TIPOGRAFIA — ESCALA UX ---------- */
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  letter-spacing: -0.04em;
+  color: var(--teal);
+}
+
+h1 { font-size: var(--fs-h1);   line-height: var(--lh-tight);   font-weight: 700; }
+h2 { font-size: var(--fs-h1);   line-height: var(--lh-tight);   font-weight: 700; }
+h3 { font-size: var(--fs-h3);   line-height: var(--lh-heading); font-weight: 600; }
+h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600; } /* 20px */
+
+.em { font-style: italic; color: var(--teal); }
+
+/* ---------- LAYOUT ---------- */
+.container {
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 var(--sp-5);  /* 24px — revertido a pedido do usuário, 2026-07-13 (tinha ido de
+    24px para 16px, depois para 8px em 2026-07-10; voltou ao valor original). Escopado SÓ na
+    margem lateral do site (esse .container) — --sp-5 em si nunca mudou, sempre foi 24px, e
+    os outros ~17 usos desse token no CSS (padding de .btn, gaps de cards, espaçamento do
+    rodapé/FAQ/warning box, etc.) nunca foram alterados por essa história. */
+}
+
+.section        { padding: var(--sp-11) 0; background: var(--page-bg); } /* 96px */
+.section--gray  { background: var(--page-bg); }
+
+/* ---------- BOTÕES ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);               /* 8px */
+  height: var(--btn-height);      /* 48px — altura padronizada de toque */
+  padding: 0 var(--sp-5);         /* 0 24px */
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);      /* 16px */
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all var(--transition);
+  white-space: nowrap;
+  line-height: var(--lh-body);
+}
+
+/* Nota: no site inteiro, .btn--green é sempre usado junto com .btn--lg (7
+   ocorrências, nenhuma standalone). Com padding-top/bottom de 12px (var(--sp-3))
+   + line-height do texto (24px), a altura natural do botão bate exatamente
+   com --btn-height (48px) — por isso o círculo do ícone abaixo usa essa
+   variável. Se o padding vertical do .btn--lg mudar de novo, reajuste também
+   o ::after pra continuar do tamanho exato da altura do botão (flush). */
+.btn--green {
+  background: var(--green);
+  color: #fff;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);               /* 12px */
+  position: relative;
+}
+
+.btn--green::after {
+  content: '';
+  display: block;
+  flex-shrink: 0;
+  width: var(--btn-height);       /* 48px — acompanha a altura natural do botão (padding 12px + texto), flush nas pontas */
+  height: var(--btn-height);
+  margin-right: 0;
+  border-radius: 50%;
+  background-color: var(--green-dark);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 40%;
+  transition: background-color var(--transition), background-image var(--transition);
+}
+.btn--green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,217,112,0.35);
+}
+.btn--green:hover::after {
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d970' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='7' y1='17' x2='17' y2='7'/%3E%3Cpolyline points='7 7 17 7 17 17'/%3E%3C/svg%3E");
+  background-size: 45%;
+}
+
+.btn--lg {
+  min-height: var(--btn-height);   /* 48px — min-height (não height) pra não cortar o texto do .final-cta .btn quando quebra em 2 linhas em telas estreitas. Com padding-top/bottom de 12px, a altura natural já bate em 48px sozinha (ver ::after do .btn--green, que usa a mesma variável) */
+  padding: var(--sp-3) 0 var(--sp-3) 20px;   /* 12px topo/base, 20px esquerda pro texto (fora da escala 8pt, valor pedido direto pelo usuário); direita fica 0 de propósito — todo botão .btn--lg é usado com .btn--green, cujo ::after (círculo do WhatsApp) precisa ficar flush com a borda direita do pill, sem padding empurrando ele pra dentro */
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);      /* 16px */
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.site-logo__img {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.hero__logo .site-logo__img {
+  height: 40px;   /* tamanho antigo, mantido no celular (<=480px) — o usuário achou o tamanho
+    maior (56px) grande demais nessa largura, mesmo ficando bom no desktop (2026-07-10) */
+}
+
+@media (min-width: 481px) {
+  .hero__logo .site-logo__img {
+    height: 56px;   /* logo maior, só a partir do tablet — escopado por .hero__logo, não muda
+      o tamanho padrão de .site-logo__img se essa classe for reaproveitada em outro lugar no
+      futuro — pedido do usuário, 2026-07-10 */
+  }
+}
+
+.hero__logo {
+  display: block;
+  width: fit-content;
+  margin: 0 auto var(--sp-6);   /* 32px — mesma distância até a headline que existe entre
+    subtítulo→botão (a opção escolhida pelo usuário entre as duas testadas) — pedido do
+    usuário, 2026-07-10. Antes tinha
+    padding-top:24px (pra descer do topo do hero) + margin-bottom:40px (gap bem maior até a
+    headline); os dois deixaram de fazer sentido já que a logo não fica mais isolada no topo */
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0;
+  width: 100%;   /* precisa ser explícito — sem isso, no intervalo de largura onde o
+    min-height (620px) "vence" o aspect-ratio abaixo (aprox. 1024-1430px), o navegador
+    recalcula a LARGURA a partir dessa altura via aspect-ratio (694→1600), deixando o .hero
+    mais LARGO que a tela (ex: 1429px numa viewport de 1200px). Como é um bloco normal sem
+    margin:auto, ele "sobra" alinhado à esquerda, cortando a direita da imagem pra fora da
+    tela — bug real reportado pelo usuário ("a foto parece alinhada à esquerda"), causado pela
+    interação entre aspect-ratio e min-height numa largura auto. width:100% trava a largura no
+    valor certo (o da tela) e faz o aspect-ratio calcular só a altura, na direção esperada */
+  min-height: 620px; /* piso: dá "espaço de sobra" pra centralizar o conteúdo verticalmente;
+    se o conteúdo (com a logo) precisar de mais que isso (telas muito estreitas com headline
+    quebrando em várias linhas), o .hero cresce além do piso — display:flex abaixo resolve
+    isso sem circularidade de height:100%/auto */
+  display: flex;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* a imagem passa a preencher a altura real do conteúdo (que agora manda),
+    em vez de o conteúdo ser cortado pela altura "natural" da imagem (era o bug: altura vinha
+    só da imagem via height:auto, cortando o botão/subtítulo em telas mais estreitas que ~1300px) */
+  object-position: 50% center; /* centralizada — abaixo de 1024px isso vale pra pilates-004.jpg
+    (fundo liso trocado via <picture>/<source>, ver index.html), que não tem sujeito pra
+    enquadrar, então centro simples já resolve. Os ajustes finos de recorte que existiam aqui
+    antes (78%/4%) eram calibrados pra pilates-003.png especificamente (mostrar a modelo no
+    tablet, a bola no celular) e deixaram de ser necessários nessa faixa — pedido do usuário,
+    2026-07-10, pra usar uma imagem de fundo diferente e mais simples em telas menores */
+}
+
+.hero__overlay {
+  position: relative; /* deixou de ser absolute+height:100% — agora ocupa o espaço real do
+    conteúdo (.hero__content), que é o que agora define a altura de .hero */
+  width: 100%;
+  z-index: 1;
+  flex: 1;               /* estica pra ocupar toda a altura do .hero (min-height ou mais) */
+  display: flex;
+  flex-direction: column;
+}
+
+.hero .container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;                /* dentro do overlay, ocupa a altura toda disponível */
+}
+
+.hero__content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--sp-6) 0;     /* 32px simétrico — antes era 156px/48px (assimétrico, calibrado
+    pra empurrar o conteúdo pra baixo dentro da altura ALTA que a imagem antes impunha);
+    agora a centralização vertical é feita pelo flex abaixo, não por padding desbalanceado */
+  text-align: center;
+  flex: 1;                     /* ocupa o espaço restante depois da logo */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;    /* centraliza h1+subtítulo+botão dentro desse espaço */
+}
+
+@media (min-width: 1024px) {
+  .hero__content {
+    max-width: 900px;   /* mais largo no desktop, pra caber a fonte grande em 2 linhas */
+  }
+}
+
+.hero h1 {
+  font-size: clamp(1.75rem, 6.5vw, 2.5rem); /* antes precisava ficar pequena (clamp 1.2rem-2.2rem)
+    pra forçar caber nas 2 linhas fixas do <br>; agora que o <br> é removido (ver
+    .hero__title-break abaixo) e a quebra é orgânica/natural do navegador, a fonte pode ser
+    maior — o texto só ganha mais linhas em vez de estourar a largura */
+  color: #ffffff;
+  margin-bottom: var(--sp-4);     /* 16px — distância padrão título→subtítulo */
+  line-height: var(--lh-tight);
+  white-space: normal;
+}
+
+/* Sistema de quebra de linha do H1 por breakpoint — máximo de 3 linhas em qualquer largura
+   (pedido do usuário, 2026-07-10 — a versão anterior tinha uma 3ª faixa com 4 linhas pros
+   celulares menores, que foi removida por pedido explícito). 3 pontos de quebra possíveis no
+   HTML (b4, b5, b8 — nomeados pela posição da palavra ANTES da qual cada um quebra, contando
+   "A"=1, "forma"=2, "mais"=3, "inteligente"=4, "de"=5, "construir"=6, "um"=7, "corpo"=8,
+   "saudável"=9):
+   - >=680px (tablet grande + desktop): b5 só → 2 linhas
+     "A forma mais inteligente de" / "construir um corpo saudável"
+   - <=679px (tablet pequeno + todos os celulares, sem excessão): b4 + b8 → 3 linhas
+     "A forma mais inteligente" / "de construir um corpo" / "saudável"
+   Pra esse padrão de 3 linhas caber em qualquer largura até 320px sem quebra extra (o
+   problema que forçou a existência da 4ª linha na versão anterior), a fonte do h1 precisa
+   encolher mais rápido abaixo de 680px do que a fórmula usada acima disso — ver a regra de
+   font-size dedicada, logo abaixo desse bloco de classes de quebra. */
+.hero__brk-b4,
+.hero__brk-b5,
+.hero__brk-b8 {
+  display: none;   /* regra base ANTES de todas as media queries abaixo — mesma especificidade,
+    ordem de cascata importa (bug real já documentado/corrigido nesta seção antes) */
+}
+
+@media (min-width: 680px) {
+  .hero__brk-b5 { display: inline; }   /* tablet grande + desktop */
+}
+
+@media (max-width: 679px) {
+  .hero__brk-b4,
+  .hero__brk-b8 { display: inline; }   /* tablet pequeno + todos os celulares */
+
+  .hero h1 {
+    font-size: clamp(1rem, calc(7.69vw - 4.31px), 4rem);   /* fonte "preenche a tela" — pedido
+      do usuário, 2026-07-10 ("o tamanho da letra fique responsivo, deve cobrir a tela inteira,
+      respeitando apenas as margens laterais"). Calibrada pra linha mais longa ("A forma mais
+      inteligente") sempre encostar quase nas margens laterais do container, com ~8px de sobra
+      de cada lado, em qualquer largura de 320 a 679px. Fórmula derivada medindo a largura real
+      do texto (Montserrat 700, letter-spacing -0.04em) via Playwright: a largura do texto
+      escala exatamente 13,0039px por 1px de font-size (linear, sem hinting não-linear nessa
+      fonte/peso), e a largura disponível é (largura da tela - 48px de padding do .container).
+      Resolvendo font = (largura-48-8)/13,0039 e convertendo o termo em vw dá 7,69vw - 4,31px.
+      Efeito colateral conhecido e aceito pelo usuário: no limite superior desta faixa (679px)
+      a fonte fica ~48px, bem maior que os 40px usados no início da faixa de 2 linhas
+      (>=680px) — existe um "salto" perceptível de tamanho bem na transição 679->680px (mostrado
+      em screenshot e aprovado assim). Se o texto do h1 mudar no futuro, essa fórmula precisa
+      ser remedida do zero (mesmo método, documentado em [[hero_correcoes]]). */
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero h1 {
+    font-size: 3rem;    /* volta ao tamanho original no desktop, com a quebra de linha fixa (2 linhas) */
+  }
+  .hero {
+    aspect-ratio: 1600 / 694;   /* proporção real de pilates-003.png — em telas bem largas
+      (acima de ~1430px, onde essa proporção passa a exigir mais altura que o piso de 620px),
+      a altura do Hero cresce junto com a largura pra sempre bater exatamente com a proporção
+      da foto, evitando o corte no topo/embaixo que o object-fit:cover fazia quando a altura
+      ficava presa em 620px numa janela muito mais larga que alta. min-height:620px (na regra
+      base do .hero) continua valendo como piso pra telas onde essa proporção daria menos que
+      620px — pedido do usuário, 2026-07-10 */
+  }
+}
+
+.hero h1 .em { color: #365470; }
+
+.hero__sub {
+  font-size: var(--fs-base);      /* 16px */
+  color: rgba(255,255,255,0.85);
+  margin: 0 auto var(--sp-6);
+  max-width: 480px;
+  line-height: var(--lh-body);
+  text-align: center;
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--sp-4);               /* 16px */
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-2);     /* 8px */
+  justify-content: center;
+}
+
+/* ---------- TICKER ---------- */
+.ticker {
+  background: var(--teal);
+  overflow: hidden;
+  padding: 12px 0;
+  width: 100%;
+  margin-top: 0;
+}
+
+.ticker__track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: max-content;
+  animation: ticker-scroll 40s linear infinite;
+}
+
+.ticker__item {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sp-2) var(--sp-3); /* 8px 12px */
+  border: 1.7px solid rgba(255,255,255,0.55);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);      /* 16px */
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-right: -1.5px;           /* sobrepõe bordas para encostar */
+}
+
+/* ícone oval dentro de cada item */
+.ticker__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-right: 0.4rem;
+}
+
+/* ícone nos itens de fundo branco (ímpares) → círculo laranja, estrela branca */
+.ticker__item:nth-child(odd) .ticker__icon {
+  background: #F06F00;
+  color: #fff;
+}
+
+/* ícone nos itens de fundo azul (pares) → círculo branco, estrela laranja */
+.ticker__item:nth-child(even) .ticker__icon {
+  background: #fff;
+  color: #F06F00;
+}
+
+/* alturas variadas — padrão de 5 em 5 */
+.ticker__item:nth-child(5n+1) { padding-top: 12px; padding-bottom: 12px; }
+.ticker__item:nth-child(5n+2) { padding-top: 4px;  padding-bottom: 4px;  }
+.ticker__item:nth-child(5n+3) { padding-top: 8px;  padding-bottom: 8px;  }
+.ticker__item:nth-child(5n+4) { padding-top: 14px; padding-bottom: 14px; }
+.ticker__item:nth-child(5n+5) { padding-top: 3px;  padding-bottom: 3px;  }
+
+/* ícone escala com a altura do item */
+.ticker__item:nth-child(5n+4) .ticker__icon { width: 44px; height: 32px; font-size: 0.85rem; }
+.ticker__item:nth-child(5n+1) .ticker__icon { width: 40px; height: 28px; font-size: 0.8rem;  }
+.ticker__item:nth-child(5n+3) .ticker__icon { width: 36px; height: 26px; font-size: 0.75rem; }
+.ticker__item:nth-child(5n+2) .ticker__icon { width: 30px; height: 22px; font-size: 0.65rem; }
+.ticker__item:nth-child(5n+5) .ticker__icon { width: 28px; height: 20px; font-size: 0.6rem;  }
+
+/* cores alternadas */
+.ticker__item:nth-child(odd) {
+  background: var(--page-bg);
+  color: var(--teal);
+  border-color: var(--page-bg);
+}
+
+.ticker__item:nth-child(even) {
+  background: transparent;
+  color: var(--page-bg);
+  border: 1.7px solid rgba(248,249,251,0.85);
+}
+
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes icon-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-18px); }
+}
+
+.icon-float {
+  animation: icon-float 3s ease-in-out infinite;
+}
+
+/* ---------- PAIN SECTION ---------- */
+.pain { padding: var(--sp-11) 0; } /* 96px top, 96px bottom — alinhado ao ritmo vertical padrão do site */
+
+/* Quebra de linha forçada em 4 linhas pra telas de celular/tablet estreito (<=600px) —
+   pedido do usuário, 2026-07-10: "Algum dos" / "sintomas abaixo" / "tem afetado a" /
+   "sua vida?". O <br> original (antes de "tem", sem classe) continua igual e sempre
+   visível — já fazia parte do design em qualquer largura. As duas quebras NOVAS (antes de
+   "sintomas" e antes de "sua") só aparecem <=600px. Breakpoint do TÍTULO voltou a ser
+   independente do breakpoint da galeria de fotos (700px, ver [[symptom_accordion_correcoes]])
+   — pedido explícito do usuário, 2026-07-10 (3ª rodada): o título continua com 2 linhas até
+   600px de tela, só quebrando pra 4 linhas a partir daí, mesmo que a galeria abaixo já tenha
+   virado 2 linhas de fotos um pouco antes (entre 601-700px). Sem nenhuma sincronização entre
+   os dois breakpoints nessa versão. */
+.pain__brk-mobile-1,
+.pain__brk-mobile-2 {
+  display: none;   /* regra base ANTES do @media — mesma especificidade, ordem de cascata
+    importa (ver aviso em [[hero_correcoes]] sobre esse mesmo tipo de bug) */
+}
+
+/* Ponte pra nunca ter uma quebra "no meio" em 3 linhas entre 600px (onde a quebra forçada de
+   4 linhas assume) e ~628px (largura onde "Algum dos sintomas abaixo" já cabe naturalmente
+   numa linha só, no tamanho fixo de 40px, sem precisar de nenhum ajuste) — mantém a regra de
+   "só 2 estados possíveis, nunca 3" mesmo com o breakpoint de volta em 600px. Sem essa ponte,
+   601-627px ficaria com 3 linhas naturais (medido via Playwright: só a partir de 628px de
+   tela "Algum dos sintomas abaixo" cabe sozinho a 40px fixo). `clamp()` deixa em 40px fixo
+   pra qualquer tela >=628px (bate exatamente com o valor fixo do h2 genérico, sem "salto") e
+   encolhe pra um mínimo de 37px (com margem de segurança confirmada: a 37px, o texto mede
+   ~548,9px contra ~553px disponíveis a 601px de tela) na faixa estreita 601-627px. Essa regra
+   só tem efeito ACIMA de 600px — o @media abaixo, com especificidade igual mas declarado
+   depois, sempre vence pra <=600px (mesmo padrão de cascata usado no resto do arquivo). */
+.pain .section-heading h2 {
+  font-size: clamp(37px, calc(11.1111vw - 29.7778px), 40px);
+}
+
+@media (max-width: 600px) {
+  .pain__brk-mobile-1,
+  .pain__brk-mobile-2 {
+    display: inline;
+  }
+
+  .pain .section-heading h2 {
+    font-size: calc(3.5714vw + 18.5714px);   /* only within this media query — encolhe de
+      40px (no limite superior, 600px, batendo exatamente com o valor fixo de fora dessa
+      faixa — sem "salto" visual) até 30px em 320px. Necessário pra "sintomas abaixo" (a
+      linha mais longa das 4) continuar cabendo numa linha só em toda a faixa — medido via
+      Playwright (naturalLines sempre 1 pra essa linha, de 320 a 600px, com a fonte calculada
+      por essa fórmula). Fórmula por 2 pontos: 40px em 600px de tela (mesmo valor fixo de fora
+      da faixa, sem salto) e 30px em 320px de tela (com margem de segurança confirmada: a
+      30px, "sintomas abaixo" mede ~258,5px contra ~272px disponíveis). Mesmo método usado
+      no h1 do Hero — ver [[hero_correcoes]] pro método completo caso o texto mude no futuro. */
+  }
+}
+
+/* ---------- SYMPTOM ACCORDION (galeria com expansão no hover/toque) ---------- */
+.symptom-accordion {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sp-2);                /* 8px */
+  max-width: 1100px;
+  height: 420px;
+  margin: var(--sp-7) auto 0;      /* 40px */
+}
+
+.symptom-card {
+  flex: 1 1 0%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: flex-grow var(--transition-slow, 0.5s ease);
+}
+
+.symptom-card.is-active {
+  flex-grow: 3.4;                  /* card ativo fica bem mais largo que os demais */
+}
+
+.symptom-card__number {
+  display: block;
+  flex-shrink: 0;
+  width: 100%;
+  text-align: left;                /* o <button> tem centralização de texto por
+                                       padrão do navegador; força à esquerda */
+  font-size: var(--fs-base);       /* 16px */
+  font-weight: 500;
+  color: var(--gray);
+  margin-bottom: var(--sp-2);      /* 8px */
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+
+.symptom-card.is-active .symptom-card__number {
+  color: var(--orange);
+}
+
+.symptom-card__photo {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--gray-light);
+}
+
+/* A foto tem largura fixa (a mesma largura do card quando ativo) e fica
+   centralizada dentro da caixa. Só a caixa (.symptom-card__photo) anima de
+   tamanho — a própria imagem nunca é redimensionada, então o object-fit:cover
+   não recalcula escala durante a transição e não há sensação de zoom. A caixa
+   estreita simplesmente "recorta" (overflow: hidden) o centro dessa mesma
+   imagem em tamanho fixo. */
+.symptom-card__photo img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 460px;
+  max-width: none;
+  height: 100%;
+  transform: translateX(-50%);
+  object-fit: cover;
+  display: block;
+  filter: grayscale(1) brightness(0.92);
+  transition: filter 0.5s ease;
+}
+
+.symptom-card.is-active .symptom-card__photo img {
+  filter: grayscale(0) brightness(1);
+}
+
+/* Removido o corte com "..." (-webkit-line-clamp:2 + height fixa de 2.6em + overflow:hidden)
+   — pedido do usuário, 2026-07-10. Causa raiz encontrada via Playwright: 2 linhas reais
+   precisam de 2×1.4em = 2.8em (var(--lh-heading)=1.4), mas a altura reservada era só 2.6em —
+   0,2em curtos, cortando a ponta da 2ª linha e disparando o "..." mesmo em textos que cabiam
+   perfeitamente em 2 linhas ("Dores nas costas", "Rigidez no corpo", "Falta de flexibilidade",
+   "Cansaço constante", "Limitações físicas"). Além disso, medido que entre ~601-900px (fileira
+   de 6 cards ainda numa linha só, mas espremida) alguns rótulos realmente precisam de 3 linhas
+   (ex: "Falta de flexibilidade" a 601px) — o clamp:2 cortava essas de verdade. Troca: sem
+   line-clamp, sem overflow:hidden, `min-height` no lugar de `height` fixa (reserva o espaço
+   de 2 linhas pros textos curtos, sem cortar os que precisam de mais). */
+.symptom-card__label {
+  display: block;
+  flex-shrink: 0;
+  width: 100%;
+  min-height: 2.8em;               /* 2 linhas reais (2 × var(--lh-heading)=1.4em) —
+                                       reserva esse espaço mínimo pra textos curtos, mas
+                                       cresce se o texto precisar de mais linhas */
+  margin-top: var(--sp-3);         /* 12px */
+  font-size: var(--fs-base);       /* 16px */
+  font-weight: 500;
+  color: var(--gray);
+  text-align: left;
+  line-height: var(--lh-heading);
+  transition: color var(--transition);
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.symptom-card.is-active .symptom-card__label {
+  color: var(--orange);
+}
+
+/* Abaixo de 700px: trocando a faixa de scroll horizontal (largura fixa de 92px por card, que
+   "sobrava" alinhada à esquerda entre 640-900px e cortava as fotos da direita abaixo de 640px)
+   por uma grade de no máximo 2 linhas com 3 fotos cada, sempre preenchendo 100% da largura
+   disponível — pedido do usuário, 2026-07-10. Acima de 700px continua EXATAMENTE como o
+   original (6 numa linha só, fluido). Sem scroll horizontal nenhum abaixo de 700px. O
+   `flex-basis` de cada card usa calc() contando os 2 gaps (8px cada, var(--sp-2)) entre os 3
+   cards de cada linha, pra encaixar exato sem sobrar nem faltar espaço.
+
+   Breakpoint MOVIDO de 600px pra 700px em 2026-07-10 — pedido do usuário: quem decide se a
+   galeria quebra pra 2 linhas não é mais um valor de largura arbitrário, é o TEXTO dos cards
+   (.symptom-card__label): ele não pode passar de 2 linhas, e nenhuma palavra pode ser cortada
+   no meio. Medido via Playwright (contagem de linhas + checagem de cada palavra individualmente
+   via Range.getClientRects, na fileira de 6 cards ainda numa linha só): entre 601-669px o
+   rótulo "Falta de flexibilidade" precisa de 3 linhas E quebra a palavra "flexibilidade" no
+   meio (a palavra sozinha já não cabe na largura do card ali). A partir de 670px isso já não
+   acontece (confirmado pixel a pixel: 669px = quebra, 670px = ok) — 700px foi escolhido como
+   breakpoint final por dar uma margem de segurança extra (~5px de sobra pra essa palavra a
+   700px, contra 0px exatos a 670px), cobrindo possíveis pequenas diferenças de métrica da
+   fonte real (Montserrat via Google Fonts, que não carrega neste ambiente de teste sandboxed
+   — ver [[diagnostico_responsividade]] — e é substituída por uma fonte de fallback um pouco
+   diferente). Esse mesmo valor (700px) também resolve de tabela o breakpoint do título da
+   seção (ver acima, [[pain_correcoes]]) — os dois ficam sincronizados. */
+@media (max-width: 700px) {
+  .symptom-accordion {
+    height: auto;             /* antes 320px fixo (1 linha) — agora 2 linhas, altura vem do
+      conteúdo */
+    flex-wrap: wrap;
+    row-gap: var(--sp-5);      /* 24px entre as 2 linhas (coluna continua usando var(--sp-2)/8px,
+      igual antes, só herdado do `gap` original) */
+  }
+  .symptom-card {
+    flex: 1 1 calc((100% - 2 * var(--sp-2)) / 3);   /* 3 cards por linha (2 gaps de 8px entre eles) */
+  }
+  .symptom-card.is-active {
+    flex-grow: 2.2;            /* card "pressionado" (ver script.js — toque e segure, no lugar
+      do hover do mouse) cresce dentro da própria linha de 3; valor menor que o do desktop
+      (3.4) porque a linha já é bem mais estreita, um crescimento igual ficaria desproporcional */
+  }
+  .symptom-card__photo {
+    flex: none;                /* antes flex:1 (esticava pra altura fixa de 320px do container);
+      agora cada linha tem altura própria (auto), então a foto precisa de uma altura explícita */
+    height: 240px;
+  }
+  .symptom-card__label {
+    font-size: 13px;           /* era var(--fs-sm) (14px) — reduzido em 1px pra garantir margem
+      de segurança na palavra mais longa ("flexibilidade") no card mais estreito possível
+      (320px de tela, ~85px de card): a 14px a margem media ficava em 0,4px (risco real de
+      quebra com a fonte real do usuário); a 13px sobram ~6,5px, confirmado sem nenhuma palavra
+      cortada e sem nenhum rótulo passando de 2 linhas em toda a faixa 320-700px (Playwright,
+      checagem palavra por palavra via Range.getClientRects). */
+  }
+}
+
+/* Do tamanho de tablet/laptop pequeno pra baixo (<=1023px — breakpoint AUMENTADO de 800px pra
+   1024px e depois ajustado pra 1023px em 2026-07-10, a pedido do usuário), REMOVIDA a animação
+   de abrir/fechar (expandir + colorir) E a animação de cor dos textos (números + rótulos) —
+   pedido do usuário: "as fotos já deve estar fixas e coloridas sem animação do mouse" + "remova
+   a animação das letras ficarem laranja... já sejam da cor laranja sem precisar fazer animação
+   (tanto os números... quanto as frases abaixo da imagem)". Nessa faixa, TODAS as fotos ficam
+   permanentemente coloridas (sem o preto-e-branco padrão), nenhum card cresce mais que os outros
+   ao tocar/segurar, e os números (.symptom-card__number) e rótulos (.symptom-card__label) já
+   nascem na cor laranja, sem precisar do estado `.is-active` pra mudar de cor. Sobrepõe o filtro
+   padrão (`.symptom-card__photo img`, grayscale(1) por padrão), o `flex-grow` do estado
+   `.is-active` herdado do bloco `@media (max-width:700px)` acima, e a cor cinza padrão de
+   número/rótulo — como esse bloco é declarado DEPOIS no arquivo e tem a mesma especificidade
+   das regras base, ele vence em toda a faixa <=700px também, além de cobrir isoladamente
+   701-1023px. O JS em script.js (pointerdown/up/cancel pra touch) continua ativo sem
+   modificação — inofensivo aqui, porque sem diferença visual entre ativo/inativo nessa faixa,
+   alternar a classe `is-active` não tem efeito nenhum. Em 1024px e acima (desktop), nada muda —
+   hover continua expandindo, colorindo a foto e deixando número/rótulo laranja só no card
+   ativo, como antes. */
+@media (max-width: 1023px) {
+  .symptom-card__photo img {
+    filter: grayscale(0) brightness(1);   /* sempre colorida, nunca preto-e-branco */
+    transition: none;                      /* sem transição pra evitar qualquer resquício
+      de animação (mesmo que os valores já sejam iguais em ambos os estados) */
+  }
+  .symptom-card.is-active {
+    flex-grow: 1;   /* mesmo valor do card inativo (herdado do `flex: 1 1 ...` base) —
+      nenhum card cresce mais que os outros, sem efeito de expansão */
+  }
+  .symptom-card__number {
+    color: var(--orange);   /* já nasce laranja, não depende mais de .is-active */
+    transition: none;
+  }
+  .symptom-card__label {
+    color: var(--orange);   /* já nasce laranja, não depende mais de .is-active */
+    transition: none;
+  }
+}
+
+.pain__bottom {
+  max-width: 660px;
+  margin: var(--sp-8) auto 0;     /* 48px */
+  text-align: center;
+}
+
+.pain__bottom .pain__text {
+  margin-bottom: 0;     /* distância até o retângulo é controlada pelo margin-top do .pain__warning (32px) */
+}
+
+.pain__bottom .btn {
+  margin-top: var(--sp-6);   /* 32px — distância padrão botão→elemento acima (era 40px) */
+}
+
+.pain__text {
+  margin-top: 2rem;
+  font-size: var(--fs-base);      /* 16px */
+  color: var(--black);
+  line-height: var(--lh-body);
+}
+
+.pain__text strong { color: var(--text); }
+
+/* Quebra de linha fixa (<br> entre "sinais" e "de que precisa...") só ACIMA de 515px de
+   tela — breakpoint ALINHADO ao limite real do retângulo vermelho (.pain__warning) logo
+   abaixo, ver nota detalhada nesse bloco mais adiante.
+
+   HISTÓRICO DE BREAKPOINT (2 mudanças no mesmo dia, 2026-07-13): era 600px; 1ª mudança pra
+   563/564px, calculada via Playwright headless (largura natural do retângulo ~547,8px
+   deixando de caber no `.container` abaixo de 564px). 2ª mudança (esta): o usuário testou
+   no navegador real dele e viu que tanto o retângulo quanto essa quebra ainda ficavam no
+   tamanho fixo em telas MENORES que 564px — o limite real, testado por ele, é
+   aproximadamente **516px**. Isso confirma que a medição via Playwright headless estava
+   errada (mesma causa já identificada antes pra font-size deste parágrafo: fonte de
+   fallback/renderização diferente entre o Chromium headless deste ambiente e o navegador
+   real do usuário — nesse caso afetando também a largura natural do texto dentro do
+   retângulo, não só a fonte do parágrafo). **Breakpoint definido em 515/516px com base no
+   relato do usuário ("mais ou menos 516px") — é uma estimativa dele testando no navegador
+   real, não uma medição exata como as outras deste arquivo. Se algum dia ele notar que
+   ainda quebra um pouco antes ou depois desse ponto, ajustar o valor com o número exato que
+   ele informar, não remedir via Playwright headless (não confiável pra esse cálculo, ver
+   aviso de metodologia no topo de [[pain_correcoes]]).**
+
+   Acima de 515px o <br> fica ativo (display:inline, valor padrão de um <br>), forçando a
+   quebra depois de "sinais". Em 515px e abaixo, o <br> é removido (display:none) e o texto
+   quebra naturalmente/responsivo. Mesmo padrão de cascata usado em `.pain__brk-mobile-*`
+   (ver [[pain_correcoes]]), só que com o sentido invertido: regra base ANTES do @media já
+   deixa o <br> ativo (não precisa de display:inline explícito, é o padrão do elemento); a
+   media query declarada depois SÓ desativa pra <=515px. Um espaço foi adicionado antes do
+   <br> no HTML (era "sinais<br>de", virou "sinais <br class="pain__text-brk-mobile">de")
+   pra não colar as duas palavras quando o <br> fica oculto abaixo de 515px. */
+@media (max-width: 515px) {
+  .pain__text-brk-mobile {
+    display: none;
+  }
+}
+
+/* Abaixo de 400px, o texto inteiro (sem a quebra fixa, que já está desativada <=515px, ver
+   acima) precisa de 3 linhas no tamanho normal (16px) em vez de 2. Uma rodada anterior
+   (2026-07-10) reduziu a fonte pra forçar 2 linhas, mas o usuário pediu o oposto depois
+   (2026-07-13): manter a fonte do mesmo tamanho que o resto do texto (16px, var(--fs-base),
+   sem override aqui) e deixar a quebra de linha ser natural — 3 linhas nessa faixa é
+   aceitável. Regra de font-size removida de propósito; não reintroduzir sem confirmar de
+   novo com o usuário. */
+
+.pain__warning {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 1.3rem;
+  margin-top: var(--sp-6);        /* 32px — distância total texto→retângulo (pedido do usuário) */
+  background: linear-gradient(135deg, #d33a2c, #b52d21);
+  border-radius: var(--radius-md); /* padronizado (era 18px, caso especial removido) */
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow), 0 8px 20px -8px rgba(181, 45, 33, 0.5);
+  text-align: left;
+}
+
+/* Mobile (<=515px — breakpoint AJUSTADO de 600px pra 563px, e depois pra 515px, ambas em
+   2026-07-13, ver histórico abaixo): o retângulo vermelho deixa de "abraçar" o próprio
+   conteúdo (fit-content, centralizado, com distância variável até a borda) e passa a
+   esticar 100% da largura disponível — mesma margem lateral de 8px do `.container` que o
+   parágrafo `.pain__text` já respeita (ele é um bloco 100% de largura por padrão). Pedido
+   original do usuário, 2026-07-10: tanto o texto quanto o retângulo devem ter a mesma
+   margem de 8px definida em `.container`. Acima de 515px, nada muda — o retângulo continua
+   estreito, abraçando o texto, sem espaço vazio sobrando à direita (desenho intencional
+   documentado em [[sistema_design]]).
+
+   HISTÓRICO: essa regra nasceu com breakpoint 700px (mesmo valor da galeria/título dessa
+   seção). No mesmo dia, o usuário pediu que a faixa 601-700px voltasse a se comportar
+   IGUAL a 701px+ (ou seja, sem esse comportamento de 100% de largura) — só a faixa <=600px
+   mantinha a mudança. Breakpoint reduzido de 700 pra 600px por esse motivo.
+
+   AJUSTE 1 (2026-07-13): o usuário notou que entre 537 e 600px o retângulo já estava
+   "ficando responsivo" (100% de largura) mesmo tendo espaço de sobra pra continuar no
+   tamanho fixo — e pediu que ele só vire responsivo quando de fato chegar no "limite dele".
+   Medido via Playwright headless: a largura natural do retângulo (fit-content, texto
+   interno travado em 27rem/432px) parecia constante em ~547,8px pra qualquer tela >=564px,
+   levando o breakpoint a ser movido pra 563/564px.
+
+   AJUSTE 2 (2026-07-13, mesmo dia, logo depois): o usuário testou no navegador real dele
+   (não o Playwright headless) e viu que o retângulo E a quebra fixa do `.pain__text` (ver
+   acima) ainda ficavam no tamanho fixo em telas MENORES que 564px — o limite real dele é
+   aproximadamente **516px**. Isso confirma que a medição headless da largura natural
+   (547,8px) estava errada — mesma causa já identificada pro font-size do parágrafo (fonte
+   de fallback/renderização diferente entre o Chromium headless deste ambiente e o navegador
+   real do usuário, que também afeta a largura do texto DENTRO do retângulo). **Breakpoint
+   final: 515/516px, baseado no relato do usuário ("mais ou menos 516px") — não é uma
+   medição pixel-a-pixel como o resto deste arquivo, é a estimativa dele testando ao vivo.
+   Não usar Playwright headless pra remedir esse valor (não confiável aqui, ver aviso de
+   metodologia no topo de [[pain_correcoes]]); se o usuário notar que ainda quebra um pouco
+   antes/depois desse ponto, ajustar com o número exato que ele informar.** */
+@media (max-width: 515px) {
+  .pain__warning {
+    display: flex;
+    width: 100%;
+  }
+}
+
+.pain__warning-icon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, #ffe066, #ffc800);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pain__warning-icon svg {
+  width: 26px;
+  height: 26px;
+  color: #1c1c1c;
+}
+
+.pain__warning-text {
+  max-width: 27rem;                /* trava a largura para o card "abraçar" o texto, sem sobrar espaço à direita */
+  font-size: 1rem;                /* 16px, ~18% maior que os 14px anteriores */
+  font-weight: 400;
+  color: #fff;
+  line-height: var(--lh-body);
+  margin: 0;
+}
+
+/* Mobile (<=515px — breakpoint AJUSTADO de 600px pra 563px e depois pra 515px, ambas em
+   2026-07-13, mesmo motivo/histórico da regra de `.pain__warning` acima — ver nota lá
+   sobre a correção de 563 pra 515 baseada no teste do usuário no navegador real):
+   removida a trava de largura de 432px (27rem) — pedido original do usuário, 2026-07-10:
+   "não precisa mais ter a regra de quebra de linha... pode voltar a ter o texto quebrando
+   a linha naturalmente". Nessa faixa o `.pain__warning` já ocupa 100% da largura
+   disponível (ver regra acima, [[pain_correcoes]] item 3), então sem essa trava o texto
+   usa todo o espaço que sobra ao lado do ícone, quebrando de forma responsiva/natural em
+   vez de ficar limitado a uma coluna fixa de 432px. Acima de 515px, nada muda — a trava de
+   432px continua ativa, comportamento intencional documentado em [[sistema_design]]. */
+@media (max-width: 515px) {
+  .pain__warning-text {
+    max-width: none;
+  }
+}
+
+.pain__warning-text strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ---------- RECOGNITION ---------- */
+
+.recognition__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); /* base de 12 colunas do site */
+  gap: var(--sp-6);               /* 32px */
+  align-items: stretch;
+}
+
+.recognition__col {
+  grid-column: span 6;            /* 2 colunas de 6/12 (equivalente a 1fr 1fr) */
+  border-radius: var(--radius-md);
+  /* Sem padding: sem o cartão colorido por trás, o padding interno só
+     deslocava título/tópicos para a direita em relação ao h2/parágrafos/
+     imagens da mesma seção, que não têm esse respiro. Removido para alinhar
+     a borda esquerda de tudo no mesmo ponto. */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Estilo "checklist" (título em negrito + checkbox), sem o cartão
+   colorido por trás — título e tópicos ficam soltos no fundo da página,
+   a pedido do usuário. ---- */
+
+.recognition__col--light {
+  /* sem fundo/borda: título e tópicos direto no fundo da página */
+}
+
+.recognition__col--dark {
+  /* sem fundo/borda: título e tópicos direto no fundo da página */
+}
+
+.recognition__title {
+  /* Segue o mesmo estilo tipográfico do h2 "Mentiram para você durante anos...",
+     a pedido do usuário: Montserrat, 40px, peso 700, line-height 1.2 */
+  font-family: var(--font-serif);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  font-weight: 700;
+  margin-bottom: var(--sp-4);     /* 16px — metade de 32px, a pedido do usuário */
+  text-align: left;
+  color: var(--text);
+}
+
+.recognition__item {
+  text-align: left;
+}
+
+.recognition__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);               /* 16px */
+}
+
+/* Celular (a pedido do usuário, 2026-07-13): em telas estreitas, alguns tópicos quebram
+   pra 2 (ou até 3) linhas de texto enquanto os outros continuam com 1 linha só — o item
+   com mais linhas fica mais alto na vertical (o bloco do ícone acompanha, por causa do
+   align-items:stretch em .recognition__item), e o resultado é um grupo de retângulos com
+   alturas bem diferentes entre si (medido via Playwright: 58px os de 1 linha vs. 82-106px
+   os de 2-3 linhas, a partir de ~650px de tela pra baixo). Trocando .recognition__list de
+   flex-column pra grid com grid-auto-rows:1fr, TODOS os itens de uma mesma coluna passam a
+   ficar com a mesma altura — a do item mais alto (que precisar de mais linhas) — sem
+   precisar medir nada via JS. Só nessa faixa de tela: >= 768px continua exatamente igual
+   (flex-column), já que ali o texto não quebra linha e os itens já saem todos do mesmo
+   tamanho naturalmente. */
+@media (max-width: 767px) {
+  .recognition__list {
+    display: grid;
+    grid-auto-rows: 1fr;
+  }
+
+  /* Com todos os itens da mesma altura (regra acima), o texto de 1 linha só sobrava
+     espaço vazio embaixo (ficava "colado" no topo do retângulo, por herdar o
+     comportamento normal de bloco). Centralizando verticalmente, o texto de 1 linha
+     fica no meio do retângulo mais alto — e o de várias linhas continua ocupando
+     naturalmente o espaço disponível (efeito imperceptível nesses, já que quase não
+     sobra vazio). */
+  .recognition__text {
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Cada tópico dentro de um retângulo próprio (fundo branco, cantos levemente
+   arredondados), a pedido do usuário. A cor do grupo fica só no bloco do
+   ícone (encostado nas bordas esquerda/topo/base), não no texto — ver
+   referência de imagem do usuário. */
+.recognition__item {
+  display: flex;
+  align-items: stretch;
+  font-size: var(--fs-base);       /* 16px */
+  font-weight: 500;
+  color: var(--text);
+  line-height: var(--lh-body);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius);    /* 8px — cantos de retângulo, não pill */
+  box-shadow: var(--shadow-sm);
+  overflow: hidden; /* recorta o bloco colorido do ícone nos cantos do card */
+}
+
+/* Bloco do ícone: ocupa a altura toda do tópico, cor de fundo do grupo */
+.recognition__icon {
+  flex-shrink: 0;
+  width: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recognition__col--light .recognition__icon {
+  background: #F2C230; /* amarelo — grupo de atenção */
+}
+
+.recognition__col--dark .recognition__icon {
+  background: #d33a2c; /* vermelho — grupo do X */
+}
+
+/* Texto: fica na parte branca, com o padding que antes era do item inteiro */
+.recognition__text {
+  padding: var(--sp-4) var(--sp-5) var(--sp-4) var(--sp-4); /* 16px topo/base, 24px direita, 16px esquerda (distância do bloco colorido) */
+}
+
+.recognition__icon svg {
+  width: 28px;
+  height: 28px;
+  /* cor definida diretamente nos atributos do SVG (vermelho) — sem stroke
+     aqui, pra não sobrescrever a cor do ícone */
+}
+
+/* ---------- STUDIO ---------- */
+/* Título "Eu serei a responsável por trazer sua qualidade de vida de volta.":
+   antes usava 2 <span style="display:block"> inline (sem nenhuma regra responsiva —
+   font-size:3rem fixo sempre), o que fazia a frase quebrar em quantas linhas
+   coubessem naturalmente abaixo de certa largura (chegava a 6-7 linhas em 320px,
+   sem controle nenhum sobre ONDE cada linha quebrava). Pedido do usuário
+   (2026-07-13): abaixo da largura em que o arranjo de 2 linhas já configurado
+   deixa de caber sozinho, forçar exatamente 3 linhas com quebras específicas:
+   "Eu serei a responsável" / "por trazer sua qualidade" / "de vida de volta." —
+   telas de computador/tablet que já cabem em 2 linhas continuam iguais.
+   Convertido pro mesmo padrão de <br class="..."> com display:none/inline por
+   media query já usado no h1 do Hero e no h2 de Sintomas (ver [[hero_correcoes]]
+   e [[pain_correcoes]]), com 3 pontos de quebra possíveis:
+   - studio__brk-a: depois de "responsável" (só mobile)
+   - studio__brk-b: depois de "trazer" (só tablet/desktop — é a quebra única do
+     arranjo de 2 linhas original)
+   - studio__brk-c: depois de "qualidade" (só mobile)
+   Breakpoint medido via Playwright com as fontes reais do Google Fonts
+   auto-hospedadas localmente pra medição (Montserrat 300/700 — headless não
+   carrega fontes externas, ver [[sync_arquivo_local]] sobre cuidado com medição
+   headless nesse projeto): com a frase ORIGINAL (2 linhas forçadas, 48px fixo),
+   o arranjo de 2 linhas cabe sozinho a partir de 747px de tela; abaixo disso
+   (<=746px) alguma das linhas já quebra sozinha sem controle. Por isso o corte
+   ficou em max-width:746px / min-width:747px (mesmo padrão de par exato usado
+   em 679/680px no Hero).
+   Dentro da faixa mobile (<=746px), a linha mais longa das 3 novas ("por trazer
+   sua qualidade", com "sua qualidade" em negrito/700 por causa do <strong>) mede
+   12,3753px de largura por 1px de font-size (medido a 48/100/200px — escala
+   linear, mesmo método do Hero). Largura disponível = largura da tela - 48px
+   (padding de 24px de cada lado do .container, ver [[margem_lateral_container]])
+   - 8px de folga (mesmo buffer usado no Hero). Resolvendo
+   font = (largura-56)/12,3753 e convertendo pra vw dá 8,0805vw - 4,5246px.
+   Com clamp(20px, 8,0805vw - 4,5246px, 48px): fica travado em 48px (igual ao
+   valor fixo de fora da faixa, sem "salto") até a tela encolher a ponto da
+   fórmula passar a valer menos que 48px (~642px), e a partir daí encolhe até
+   ~21,3px em 320px — verificado via Playwright que as 3 linhas cabem exatamente
+   como especificado (sem quebra extra nem overflow) em toda a faixa de 320 a
+   746px. Se o texto do título mudar no futuro, essa fórmula precisa ser
+   remedida do zero (mesmo método). */
+#sobre .section-heading h2.studio__title {
+  color: #ffffff;
+  max-width: 100%;
+  font-size: 3rem;      /* 48px fixo, igual ao inline style anterior — a regra
+    dentro do @media (max-width:746px) abaixo vence pra telas estreitas por
+    estar declarada DEPOIS (mesma especificidade, ordem de cascata importa —
+    mesmo cuidado do Hero/Sintomas, [[hero_correcoes]]/[[pain_correcoes]]) */
+  font-weight: 300;
+}
+
+.studio__brk-a,
+.studio__brk-b,
+.studio__brk-c {
+  display: none;   /* regra base ANTES de todas as media queries abaixo — mesma
+    especificidade, ordem de cascata importa (mesmo cuidado documentado em
+    [[hero_correcoes]]) */
+}
+
+@media (min-width: 747px) {
+  .studio__brk-b { display: inline; }   /* tablet + desktop: 2 linhas (arranjo já configurado) */
+}
+
+@media (max-width: 746px) {
+  .studio__brk-a,
+  .studio__brk-c { display: inline; }   /* celular + tablet estreito: 3 linhas */
+
+  #sobre .section-heading h2.studio__title {
+    font-size: clamp(20px, 8.0805vw - 4.5246px, 48px);
+  }
+}
+
+/* Nota: a instância real (index.html, dentro de #sobre) tinha
+   grid-template-columns inline "auto 1fr" (movido pra `#sobre .studio__grid`
+   abaixo em 2026-07-13, pra poder ter uma versão diferente em telas
+   estreitas via media query — inline nunca perde pra media query sem
+   !important). A coluna da foto usa clamp() pra um dimensionamento
+   responsivo mais preciso do que uma fração fixa de 12 colunas conseguiria.
+   Por isso essa classe base NÃO define grid-column nos filhos (isso
+   quebraria o layout real de 2 colunas, já que a grade só tem 2 faixas,
+   não 12) — é só uma exceção documentada, mantida como estava antes desse
+   ajuste de sistema. */
+.studio__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* fallback (a instância real usa a regra #sobre .studio__grid abaixo) */
+  gap: var(--sp-9);               /* 64px */
+  align-items: center;
+}
+
+/* Instância real (#sobre): 2 colunas (foto + bio) até 940px de tela; abaixo
+   disso vira 1 coluna centralizada, pedido do usuário em 2026-07-13 — ordem
+   visual (título, foto, "Muito prazer,", "Kamila Pilates", texto) já sai
+   certa sozinha, sem precisar de `order`, porque segue a ordem do HTML: o
+   título fica fora do grid (acima, sempre a largura toda), depois a foto é
+   o 1º filho do grid e o bloco de bio (`.studio__bio`, com "Muito prazer,"
+   + "Kamila Pilates" + parágrafo) é o 2º. Decisões confirmadas com o
+   usuário (AskUserQuestion, 2026-07-13): bloco de bio fica centralizado na
+   tela mas com o TEXTO alinhado à esquerda dentro dele (não usa
+   text-align:center); esse breakpoint de 940px é independente da quebra de
+   linha do título "Eu serei a responsável..." (essa continua em 746/747px,
+   ver [[studio_titulo_quebra]]).
+   Foto (`.studio__img-wrap`, largura movida do inline pra
+   `#sobre .studio__img-wrap` abaixo, mesmo motivo do grid-template-columns
+   — inline nunca perde pra media query sem !important): 1ª decisão do
+   usuário foi manter o tamanho compacto de sempre; **revertido em
+   2026-07-13, mesmo dia** — usuário pediu pra foto crescer e ocupar a
+   largura toda disponível abaixo de 940px (`width:100%` dentro do @media,
+   em vez do `clamp(260px,38vw,420px)` de fora). A foto é vertical/retrato
+   (723×1116px, proporção ~0,65) e por padrão mantém a proporção natural via
+   `height:auto` no `<img>` (não corta) — como a largura cresce até a
+   largura do container, a altura cresce junto na mesma proporção, ficando
+   bem alta em telas de tablet (ex.: ~1003px de altura a 700px de tela,
+   ~1315px de altura a 900px de tela).
+   **Ajuste seguinte, mesmo dia**: usuário pediu pra CORTAR a foto (não
+   deixar tão alta) só na faixa 481-939px especificamente, com o corte
+   alinhado ao TOPO do quadro (prioriza o rosto, que fica na parte de cima
+   da foto, cortando por baixo). Fora dessa faixa nada muda: >=940px
+   continua no tamanho compacto de sempre (sem corte, proporção natural) e
+   <=480px continua em largura total SEM corte (proporção natural,
+   `height:auto`) — só o intervalo 481-939px corta. Proporção do corte
+   escolhida pelo usuário (AskUserQuestion): **quadrada (1:1)** — a altura
+   do quadro passa a ser igual à largura nessa faixa, em vez de seguir a
+   proporção original da foto. Implementado com `aspect-ratio:1/1` no
+   wrapper (que já tem `width:100%` nessa faixa mais ampla de <=939px) +
+   `object-fit:cover; object-position:top` na `<img>` (preenche o quadro
+   cortando o excesso, ancorado no topo). As propriedades da `<img>` também
+   saíram do inline (`width/height/object-fit/display`) pro mesmo motivo —
+   viraram a regra base `#sobre .studio__img-wrap img` logo abaixo. */
+#sobre .studio__grid {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--sp-7);   /* 40px */
+}
+
+#sobre .studio__img-wrap {
+  width: clamp(260px, 38vw, 420px);
+}
+
+#sobre .studio__img-wrap img {
+  width: 100%;
+  height: auto;
+  object-fit: initial;
+  display: block;
+}
+
+@media (max-width: 939px) {
+  #sobre .studio__grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 8px;   /* pedido do usuário, rodada 3 (2026-07-13): "esse quadrado
+      deve ter apenas 8px de distância da foto da Kamila que está acima
+      dele" — sobrescreve o gap:var(--sp-7) (40px) da regra base (>=940px)
+      só nessa faixa; como o grid tem 1 única coluna aqui, esse gap vira a
+      distância vertical entre a foto e o retângulo da bio. */
+  }
+
+  #sobre .studio__img-wrap {
+    width: 100%;   /* cresce pra ocupar a largura toda disponível (largura da
+      coluna do grid, que é a largura do container nessa faixa de 1 coluna) */
+  }
+
+  #sobre .studio__bio {
+    width: 100%;   /* "responsivo respeitando apenas a margin (container) do
+      site" — pedido do usuário em 2026-07-13, rodada 2: tirou o
+      max-width:65ch que tinha antes (limitava a largura pra uma coluna de
+      leitura) e passou a ocupar a largura toda da coluna do grid, igual à
+      foto logo acima — só o padding do .container (24px de cada lado)
+      limita a largura visível, nada mais. Texto continua alinhado à
+      esquerda por padrão (nenhum text-align aplicado), fluindo livremente
+      dentro dessa largura maior. */
+    border: 1px solid rgba(54, 98, 115, 0.6);   /* mesma cor/espessura da
+      borda de .studio__img-wrap (foto da Kamila) — pedido do usuário em
+      2026-07-13, "igual a borda que fica em volta da foto da Kamila" */
+    border-radius: var(--radius-md);   /* pedido do usuário, rodada 2:
+      "seguir os padrões de bordas arredondadas" — mesmo valor (16px) usado
+      em .studio__img-wrap e nos cards/painéis do site em geral (ver
+      [[sistema_design]]) */
+    background: #182c37;   /* pedido do usuário, rodada 3: "a mesma cor que
+      tem o quadrante de baixo, onde fala sobre Atendimento Personalizado"
+      — mesmo valor hex usado no bloco #como-funciona logo abaixo desta
+      seção (era `background:none`/sem cor de fundo antes) */
+    padding: 32px;   /* pedido do usuário, rodada 3: 32px em todos os lados
+      (era 24px antes) */
+  }
+}
+
+/* Sub-faixa de 481-939px (dentro da faixa mobile/tablet de <=939px acima):
+   **1ª tentativa (2026-07-13)** foi cortar a foto num quadro quadrado (1:1,
+   object-fit:cover + object-position:top) pra não ficar tão alta nessa
+   faixa. **Substituída no mesmo dia** — usuário preferiu trocar de foto em
+   vez de cortar: "Kamila 3.jpg" (paisagem, 1122×775px, proporção ~1,45) é
+   usada só nessa sub-faixa via `<picture><source media="(min-width:481px)
+   and (max-width:939px)">`, no lugar de "Kamila 2.jpg" (retrato, usada
+   fora dessa faixa). Como "Kamila 3.jpg" já é bem mais baixa/larga por
+   natureza, a altura resultante já fica razoável usando a MESMA regra
+   base de sempre (`#sobre .studio__img-wrap img { height:auto;
+   object-fit:initial }`, sem corte) — não precisou de nenhuma regra CSS
+   nova aqui, só a troca de imagem no HTML. Nenhum media query de CSS
+   dedicado a esse sub-range restou depois dessa mudança. */
+
+.studio__img-wrap {
+  position: relative;
+  border-radius: var(--radius-md);            /* 2×8px */
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.studio__img-wrap img {
+  width: 100%;
+  height: 480px;                  /* 60×8px */
+  object-fit: cover;
+}
+
+/* ---------- MID CTA ---------- */
+.mid-cta {
+  padding: var(--sp-11) 0;        /* 96px */
+  text-align: center;
+  background: var(--page-bg);
+  border-top: 2px solid var(--orange);
+  border-bottom: 2px solid var(--orange);
+  position: relative;
+}
+
+.mid-cta h2 {
+  max-width: 704px;               /* 88×8px */
+  margin: 0 auto var(--sp-4);     /* 16px */
+  color: var(--text);
+}
+
+.mid-cta h2 em { font-style: italic; color: var(--teal); }
+
+.mid-cta p {
+  font-size: var(--fs-base);      /* 16px */
+  color: var(--gray);
+  margin-bottom: var(--sp-7);     /* 40px */
+}
+
+.mid-cta--orange {
+  background: #f9f9f9;
+  border-top: none;
+  border-bottom: none;
+  padding: 6rem 0; /* 96px top, 96px bottom */
+}
+
+.mid-cta--orange h2 {
+  color: #F06F00;
+}
+
+/* Quebra de linha fixa do título "Mentiram para você durante anos; descubra por que você
+   ainda não conseguiu um corpo forte e saudável até hoje" — SÓ abaixo de 696px (a pedido
+   do usuário, 2026-07-13). Acima de 696px o texto já flui naturalmente para essa MESMA
+   arranjo de 4 linhas (a caixa do h2 é sempre 648px de largura, via max-width inline, acima
+   de 696px de tela — 696-48=648 é exatamente onde a caixa deixa de ficar presa nesse teto
+   e passa a encolher com a tela), então nada muda ali; não é uma escolha arbitrária de
+   "celular", é o ponto exato onde a quebra natural deixa de bater com a pedida.
+
+   A linha mais larga ("ainda não conseguiu um corpo") mede 645,75px a 40px de fonte (Range,
+   igual à técnica usada no .proof-stats__title/.testimonials). Cabe em 648px com margem de
+   2,25px só — por isso o clamp já começa ligeiramente abaixo de 40px na ponta de cima (39,7px)
+   como margem de segurança extra pra variação de renderização de fonte entre navegadores.
+
+   Abaixo de 696px, a caixa vira 100% da largura do .container (tela - 48px de padding) e
+   encolhe proporcionalmente: em 320px sobram 272px, precisa de 16,5px de fonte (medido via
+   busca binária, testando a MESMA quebra forçada, achando a maior fonte que ainda cabe em
+   4 linhas sem estourar uma 5ª) - margem de segurança de 0,3px já aplicada.
+   Verificado com Playwright em TODAS as larguras inteiras de 320 a 696px: 4 linhas em 100%
+   dos casos, sem overflow em nenhuma delas. */
+.mid-cta__lead-title-brk {
+  display: none; /* regra base — sem quebra fixa, flui natural (igual já era) */
+}
+
+@media (max-width: 696px) {
+  .mid-cta__lead-title-brk {
+    display: inline;
+  }
+
+  .mid-cta__lead-title {
+    font-size: clamp(16.5px, calc(6.1702vw - 3.245px), 39.7px);
+  }
+}
+
+/* Versão unificada: mid-cta + recognition na mesma seção */
+.mid-cta--with-recognition {
+  padding-bottom: 6rem; /* 96px */
+}
+
+.mid-cta--with-recognition .recognition__grid--inline {
+  margin: var(--sp-8) auto var(--sp-8); /* 48px top e bottom */
+  max-width: 1100px;
+  /* Empilhado verticalmente (laranja em cima, azul embaixo) e centralizado na página,
+     a pedido do usuário — substitui o grid de 2 colunas lado a lado */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Espaço entre os dois grupos: 32px (herdado de .recognition__grid) + 32px
+     a mais a pedido do usuário = 64px (var(--sp-9)) entre os tópicos do 1º
+     grupo e o título "Talvez você já tenha tentado..." */
+  gap: var(--sp-9);
+}
+
+.mid-cta--with-recognition .recognition__grid--inline .recognition__col {
+  width: 100%;
+  max-width: 648px; /* mesma largura já usada nesta seção (h2/imagens de mídia) */
+}
+
+.mid-cta--with-recognition .btn {
+  margin-top: 0;
+}
+
+.mid-cta p.mid-cta__body-text {
+  max-width: 58ch; /* ~12 palavras por linha (medido com a fonte/tamanho reais via Playwright em 2026-07-08, era 50ch/~11 palavras; largura confere pra 18px e 20px, "ch" escala com a fonte) */
+  margin: 2rem auto var(--sp-8); /* 32px acima, 48px abaixo */
+  font-size: 20px;      /* era var(--fs-base)/16px, depois 18px — fora da escala, pedido explícito do usuário só pra este texto */
+  color: var(--black);
+  line-height: var(--lh-body);
+  text-align: left;
+}
+
+.mid-cta p.mid-cta__body-text--last {
+  margin-bottom: 0;   /* último parágrafo antes do .final-cta — o espaço acima do card vem só do padding-top do .final-cta (40px), sem somar com esse margin-bottom. Especificidade igual à regra base (.mid-cta p.mid-cta__body-text) e declarada depois, pra garantir que vença */
+}
+
+.mid-cta p.mid-cta__body-text--tight-below {
+  margin-bottom: 24px;   /* era 48px (var(--sp-8)) da regra base. Parágrafos imediatamente antes de uma das 3 imagens (CNN/OUTRA/VEJA SAÚDE) — o espaço visível até a imagem é o maior entre este margin-bottom e o margin-top da imagem (1.5rem/24px, eles colapsam por serem blocos irmãos adjacentes), então 24px aqui = 24px de espaço visível (era 48px, pedido do usuário pra reduzir pela metade). Especificidade igual à regra base, declarada depois pra vencer o empate. */
+}
+
+/* ---------- PROOF STATS ---------- */
+/* MOBILE-FIRST a partir de 2026-07-13 (pedido explícito do usuário): abaixo de 1140px
+   a seção INTEIRA vira 1 coluna só (título em cima, cards embaixo, empilhados, em
+   fluxo normal) e o scroll-jack (300vh, painel sticky, cards sobrepostos com
+   translateY animado) fica DESLIGADO por completo — os cards passam a rolar com
+   scroll fluido normal, como qualquer conteúdo da página. As regras BASE abaixo (sem
+   media query) já são a versão empilhada; o `@media (min-width: 1140px)` de cada
+   propriedade restaura o comportamento de desktop (2 colunas + scroll-jack), que
+   continua EXATAMENTE como estava antes desta mudança. Ver measureTitleColumnWidth(),
+   initScrollCards() (isStacked()/clearDesktopInlineStyles()) em script.js — o JS segue
+   o MESMO breakpoint (1140px) pra saber quando aplicar/remover a animação. */
+.proof-stats {
+  background: #112530;
+  position: relative;
+  z-index: 1;     /* garante que os cards animando fiquem acima das seções abaixo (só importa em desktop, mas inofensivo aqui) */
+}
+
+@media (min-width: 1140px) {
+  .proof-stats {
+    height: 300vh;  /* espaço de scroll: 100vh visível + 200vh de animação (card-0: 20vh — reduzido
+                       pela metade a pedido do usuário, pra subir mais rápido e ficar com velocidade
+                       mais parecida com a dos outros cards; cards 1-3: 60vh cada, inalterado).
+                       Depoimentos NÃO faz parte dessa altura (voltou a ser seção normal, ver
+                       .testimonials). Modelo em cascata: card-0 sobe centralizado -> topo (0-20vh);
+                       cards 1-3 seguem o de cima a 96px de distância e cada um fecha essa distância
+                       sozinho na sua própria zona (20-80/80-140/140-200vh) — ver initScrollCards()
+                       em script.js. Sem pausa extra no final: o scroll-jack libera assim que o
+                       card-3 ("Energia extra") fecha a distância a 96px do topo. */
+  }
+}
+
+/* Painel que gruda no topo enquanto a seção dá scroll — SÓ em desktop (>= 1140px). No
+   modo empilhado é só um container normal (sem sticky, sem altura de 100vh), com o
+   mesmo respiro de topo (96px) por consistência visual com o resto do site. */
+.proof-stats__sticky {
+  padding-top: var(--sp-11); /* 96px, mesmo respiro do topo usado no resto do site */
+}
+
+@media (min-width: 1140px) {
+  .proof-stats__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: flex-start;
+  }
+}
+
+/* Empilhado (< 1140px): 1 coluna, título em cima, cards embaixo, com respiro entre os
+   dois. `align-items: stretch` (default de flex-direction:column) faz título e coluna
+   dos cards ocuparem 100% da largura disponível — o texto do título se centraliza
+   sozinho (text-align:center, ver .proof-stats__title abaixo) e os cards se centralizam
+   via max-width + margin:auto (ver .proof-stats__cards-wrapper abaixo). */
+.proof-stats__layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8); /* 48px entre o título e o primeiro card */
+  width: 100%;
+}
+
+/* Desktop (>= 1140px): volta a ser grid de 2 colunas. Largura das colunas calculada
+   pra caber exatamente dentro do `.container` padrão do site (1140px, conteúdo
+   disponível 1124px). Histórico do dia 2026-07-13: "5fr 7fr" (proporcional) → "7fr 5fr"
+   (invertido, pra caber as 5 linhas fixas do título) → "560px 1fr" + container alargado
+   pra 1320px (cards ficaram enormes, 664px, passando da margem direita padrão do site)
+   → "560px 500px" (as duas colunas com px fixo calculado à mão) → **esta versão**:
+   título com largura MEDIDA POR JS (variável `--proof-stats-title-col`, ver
+   measureTitleColumnWidth() em script.js), cards em `1fr`.
+   Por que trocar um px fixo calculado à mão por uma variável medida por JS: o usuário
+   reportou, testando no navegador real, que o vão entre o FIM do texto "poucas semanas"
+   e o card ficava ~180px — bem mais que os 64px pedidos — porque a fonte (Montserrat,
+   via Google Fonts) renderiza essa linha com uma largura diferente da que tínhamos
+   estimado. Em vez de arriscar outro número fixo errado, `measureTitleColumnWidth()`
+   mede a largura REAL da linha mais larga do título e define a coluna exatamente do
+   tamanho dela (+2px de folga só pra arredondamento). Como a coluna dos cards é `1fr` e
+   o container tem largura fixa (1140px) nesta faixa, ela absorve automaticamente todo o
+   espaço restante — a borda direita do card sempre encosta na margem padrão do site
+   (nunca passa dela, nunca sobra), e o gap de 64px fixo (CSS) fica sempre entre o fim
+   REAL do texto e o card. Fallback "560px" no `var()` é usado só até o JS rodar (no
+   primeiro instante antes do load). */
+@media (min-width: 1140px) {
+  .proof-stats__layout {
+    display: grid;
+    grid-template-columns: var(--proof-stats-title-col, 560px) 1fr;
+    gap: 64px;
+    align-items: stretch; /* colunas com mesma altura */
+  }
+}
+
+/* Coluna direita: cheia (empilhado) ou estica pra igualar a altura da esquerda (desktop) */
+.proof-stats__right {
+  display: flex;
+  flex-direction: column;
+}
+
+.proof-stats__left {
+  width: 100%;
+}
+
+@media (min-width: 1140px) {
+  .proof-stats__left {
+    will-change: transform; /* JS anima translateY (título centralizado -> travado -> sobe no final) — só em desktop */
+  }
+}
+
+/* Título: 40px + centralizado no modo empilhado (decisão do usuário, 2026-07-13 — ver
+   AskUserQuestion: "40px, padrão do site" e "Centralizado"), volta a 54,4px + alinhado
+   à esquerda em desktop (>= 1140px, comportamento inalterado desde antes desta mudança).
+   Histórico do valor 54,4px: era `clamp(2.2rem, 3.8vw, 3.4rem)` (fluido) → fixado em
+   40px via AskUserQuestion → usuário achou pequeno ao ver ao vivo, pediu 54,4px (o
+   antigo teto do clamp) — mas isso tudo vale só pra desktop agora; o modo empilhado tem
+   sua PRÓPRIA decisão (40px), tomada separadamente.
+
+   FONTE no modo empilhado (2026-07-13, 2ª rodada): o usuário pediu quebras de linha
+   FIXAS específicas por quantidade de linha (ver .proof-stats__title-brk-b* abaixo) e,
+   pra telas pequenas demais pra caber o arranjo de 4 linhas em 40px, pediu que a fonte
+   diminua "um pouco" só o suficiente pra sempre caber nesse arranjo de 4 linhas. Como
+   isso é uma faixa estreita e específica (< 532px de tela, ver cálculo abaixo), a fonte
+   é 40px FIXO em qualquer tela >= 532px (a enorme maioria dos casos) e só nessa faixa
+   estreita final usa uma fórmula de encolhimento — mesmo padrão já usado em
+   `.pain .section-heading h2` (calc() baseado em vw, só na ponta mais estreita, nunca
+   um clamp cobrindo o site inteiro). `clamp()` aqui faz o valor FICAR em 40px acima de
+   532px (o teto do clamp barra a fórmula de ultrapassar 40) e só abaixo disso a fórmula
+   realmente entra em ação — não é o mesmo "clamp fluido o tempo todo" que o usuário já
+   rejeitou antes (aqui, na prática, é um valor fixo com uma exceção pontual). Ver
+   cálculo completo em .proof-stats__title-brk-b5/-b8/-b11 abaixo (a linha "alunos
+   relataram após", a mais larga do arranjo de 4 linhas, é a que dita o limite). */
+.proof-stats__title {
+  color: #ffffff;
+  margin-bottom: var(--sp-4);     /* 16px — distância padrão título→subtítulo (era 24px) */
+  line-height: var(--lh-tight);
+  font-weight: 600;
+  text-align: center;             /* modo empilhado */
+  /* RECALCULADO em 2026-07-13 depois que a margem lateral do .container voltou de 8px pra
+     24px (24px cada lado = 48px total, era 16px). A linha mais larga do arranjo de 4 linhas
+     ("alunos relataram após") mede 472,19px a 40px de fonte (Montserrat 600, remedido via
+     Playwright com o mesmo método de sempre). Com 48px de padding, ela só cabe com folga a
+     partir de ~530px de tela (530-48=482, ~10px de margem sobre os 472,19px necessários,
+     mesma proporção de folga usada na conta original). Abaixo disso a fonte encolhe até
+     22,5px em 320px de tela (320-48=272px disponíveis). 40px fixo até 530px; abaixo disso
+     encolhe conforme o clamp() abaixo. */
+  font-size: clamp(22.5px, calc(8.3333vw - 4.1667px), 40px);
+}
+
+@media (min-width: 1140px) {
+  .proof-stats__title {
+    font-size: 54.4px;
+    text-align: left;
+  }
+}
+
+/* <br> manuais do título — SISTEMA DE QUEBRA POR QUANTIDADE DE LINHA (2026-07-13,
+   pedido explícito do usuário). 8 pontos de quebra possíveis no HTML, nomeados pela
+   posição da palavra ANTES da qual cada um quebra (mesmo padrão de nomenclatura já
+   usado em .hero__brk-b4/b5/b8), contando "Veja"=1 "o"=2 "que"=3 "nossos"=4 "alunos"=5
+   "relataram"=6 "após"=7 "poucas"=8 "semanas"=9 "de"=10 "prática"=11:
+
+   - Desktop (>= 1140px, INALTERADO): b4+b6+b8+b10 → 5 linhas fixas, sempre as mesmas
+     ("Veja o que" / "nossos alunos" / "relataram após" / "poucas semanas" / "de
+     prática") — mesmo comportamento de antes desta mudança, só reorganizado nesses 8
+     pontos de quebra (tinha uma classe única .proof-stats__title-brk antes).
+
+   - Empilhado (< 1140px), 3 arranjos diferentes conforme o espaço disponível (medidos
+     via largura real da linha mais larga de cada arranjo, fonte 40px, Montserrat 600/700
+     — headless, sujeito à mesma ressalva de metodologia de sempre, ver
+     [[proof_stats_correcoes]]):
+
+     • >= 830px de tela → 2 LINHAS (b7 só): "Veja o que nossos alunos relataram" /
+       "após poucas semanas de prática". Linha mais larga ("Veja o que nossos alunos
+       relataram") mede ~804px — cabe com folga em qualquer tela nessa faixa (a
+       largura do container já é bem maior que o breakpoint de 1140px do desktop, então
+       nunca chega a faltar espaço aqui).
+
+     • 594px a 829px de tela → 3 LINHAS (b6 + b9): "Veja o que nossos alunos" /
+       "relataram após poucas" / "semanas de prática". Linha mais larga ("Veja o que
+       nossos alunos") mede ~568px.
+
+     • <= 593px de tela → 4 LINHAS (b5 + b8 + b11): "Veja o que nossos" / "alunos
+       relataram após" / "poucas semanas de" / "prática". Linha mais larga ("alunos
+       relataram após") mede 472,19px a 40px (remedido em 2026-07-13, ver nota de
+       RECÁLCULO abaixo) — é ESSA a linha que dita o cálculo do encolhimento de fonte
+       abaixo de 530px (ver .proof-stats__title acima): a 40px ela precisa de ~472px de
+       largura; abaixo de 530px de tela (482px de conteúdo disponível dentro do
+       `.container`, 24px de padding cada lado) não sobra mais espaço suficiente, e o
+       clamp() do font-size começa a encolher a fonte pra ela continuar cabendo numa
+       linha só até a tela mais estreita testada no site (320px, onde a fonte cai pra
+       22,5px).
+
+       RECÁLCULO (2026-07-13): esses números foram recalculados depois que a margem
+       lateral do `.container` voltou de 8px para 24px (ver [[margem_lateral_container]]).
+       Os valores antigos (532px de breakpoint, ~506px de largura necessária, 23,3px de
+       fonte mínima) tinham sido calibrados assumindo só 8px de padding — com 24px eles
+       ficariam incorretos e o arranjo de 4 linhas quebraria numa 5ª linha extra em telas
+       estreitas (confirmado via Playwright antes desta correção). */
+.proof-stats__title-brk-b4,
+.proof-stats__title-brk-b5,
+.proof-stats__title-brk-b6,
+.proof-stats__title-brk-b7,
+.proof-stats__title-brk-b8,
+.proof-stats__title-brk-b9,
+.proof-stats__title-brk-b10,
+.proof-stats__title-brk-b11 {
+  display: none; /* regra base — nenhuma quebra ativa até as media queries abaixo decidirem */
+}
+
+@media (min-width: 1140px) {
+  .proof-stats__title-brk-b4,
+  .proof-stats__title-brk-b6,
+  .proof-stats__title-brk-b8,
+  .proof-stats__title-brk-b10 {
+    display: inline;
+  }
+}
+
+@media (max-width: 1139px) and (min-width: 830px) {
+  .proof-stats__title-brk-b7 {
+    display: inline;
+  }
+}
+
+@media (max-width: 829px) and (min-width: 594px) {
+  .proof-stats__title-brk-b6,
+  .proof-stats__title-brk-b9 {
+    display: inline;
+  }
+}
+
+@media (max-width: 593px) {
+  .proof-stats__title-brk-b5,
+  .proof-stats__title-brk-b8,
+  .proof-stats__title-brk-b11 {
+    display: inline;
+  }
+}
+
+/* Cards empilhados (< 1140px): fluxo normal, coluna única, centralizada e mais estreita
+   que o container cheio (pedido do usuário — nem largura total, nem o tamanho que tinha
+   em desktop). 560px = meio-termo dentro da faixa sugerida (480-600px), valor já usado
+   em outras larguras de texto do site (ex: .guarantee p). */
+.proof-stats__cards-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);     /* 32px entre os cards empilhados */
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* Desktop (>= 1140px): volta a ser a área de cards sobrepostos por scroll-jack — altura
+   calculada por JS (measureCardsWrapperHeight() em script.js) a partir do conteúdo real
+   dos 4 cards (o maior entre eles define a altura, os outros 3 ficam com a MESMA altura
+   — decisão do usuário via AskUserQuestion, "altura única baseada no maior texto"), em vez
+   de "esticar" (`flex:1`) para igualar a altura da coluna do título à esquerda.
+
+   BUG que isso corrige: como cada `.proof-card--data` é `position:absolute; inset:8% 0`
+   (altura = 84% da altura DESTE wrapper) e tem `overflow:hidden`, a altura do wrapper
+   definia quanto texto cabia em cada card — mas antes essa altura vinha inteiramente do
+   `flex:1` esticando pra bater com a coluna do título (`align-items:stretch` no grid pai),
+   sem NENHUMA relação com o quanto de texto os cards realmente precisavam. Resultado
+   medido: em telas de notebook comuns (1024-1280px), até 114px de texto ficavam cortados
+   silenciosamente (ver [[proof_stats_correcoes]]) — e o bug piorava em telas MENORES
+   (contraintuitivo: telas maiores empurravam o font-size do título mais alto — antes fluido
+   via clamp/vw — fazendo-o quebrar em mais linhas e, por tabela, esticar os cards mais). */
+@media (min-width: 1140px) {
+  .proof-stats__cards-wrapper {
+    display: block;
+    position: relative;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    /* altura real definida via JS (measureCardsWrapperHeight) */
+  }
+}
+
+.proof-card {
+  border-radius: var(--radius-md);
+}
+
+/* Cards no modo empilhado: caixas normais em fluxo, mesma aparência visual (fundo,
+   padding, raio) que em desktop — só sem posicionamento absoluto nem transform. */
+.proof-card--data {
+  background-color: #193244;
+  background-size: cover;
+  background-position: center;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--sp-6) var(--sp-7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Desktop (>= 1140px): absolutamente sobrepostos, JS move o translateY em tempo real */
+@media (min-width: 1140px) {
+  .proof-card--data {
+    position: absolute;
+    inset: 8% 0;
+    /* posição inicial: logo abaixo da borda inferior da tela */
+    transform: translateY(72vh);
+    /* SEM transition CSS — o JS controla pixel a pixel para fluidez total */
+    will-change: transform;
+  }
+}
+
+/* Overlay de escurecimento — controlado por JS via --card-darkness (só desktop; no
+   modo empilhado o JS nunca define esse valor acima de 0, ver clearDesktopInlineStyles()
+   em script.js, então o overlay fica sempre transparente aqui) */
+.proof-card--data::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, var(--card-darkness, 0));
+  border-radius: var(--radius-md);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Conteúdo acima do overlay — escurece junto com o fundo via --card-darkness */
+.proof-card__headline,
+.proof-card__tags,
+.proof-card__desc {
+  position: relative;
+  z-index: 1;
+  opacity: calc(1 - var(--card-darkness, 0));
+}
+
+/* Primeiro card: fallback estático em desktop (JS assume e sobrescreve isso já no load,
+   ver initScrollCards()/measureCenterOffset() em script.js — ele sobe da posição
+   centralizada na tela até aqui, 0, que fica a 96px do topo). Inofensivo no modo
+   empilhado (translateY(0) não desloca nada; sem position:absolute, z-index não tem
+   efeito visual num fluxo sem sobreposição). */
+.proof-card--data[data-card="0"] {
+  transform: translateY(0);
+  z-index: 1;
+  will-change: transform;
+}
+.proof-card--data[data-card="1"] { z-index: 2; }
+.proof-card--data[data-card="2"] { z-index: 3; }
+.proof-card--data[data-card="3"] { z-index: 4; }
+
+/* Fonte FIXA (2026-07-13) — era `clamp(1.8rem, 3.5vw, 2.6rem)` (28,8px a 41,6px),
+   fluida com a largura da tela, o que fazia a fonte "diminuir" continuamente até em
+   telas de tablet/desktop (o card em si muda de largura em vários pontos desta seção —
+   ver [[proof_stats_correcoes]] — e o clamp reagia a cada uma dessas mudanças). Pedido
+   do usuário: fixo em desktop E tablet, só celular pode adaptar, com valores fixos
+   "de 8 em 8" (mesma escala tipográfica do site: --fs-h1/h2/h3 = 40/32/24px). Breakpoint
+   de 594px reaproveitado do sistema de linhas do título logo acima nesta mesma seção
+   (mesmo limite onde o modo empilhado já considera a tela "celular", não mais
+   "tablet"). Não reintroduzir clamp/vw aqui.
+
+   ATUALIZAÇÃO (2026-07-13): o usuário pediu para remover o segundo degrau (24px
+   abaixo de 480px) — o título NÃO deve diminuir mais do que já diminui em 480px.
+   Agora fica fixo em 32px em toda a faixa <= 593px, sem novo corte em 479px. Não
+   reintroduzir o degrau de 24px aqui. */
+.proof-card__headline {
+  font-family: var(--font-serif);
+  font-size: 40px;                /* fixo — desktop + tablet (>= 594px) */
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  line-height: var(--lh-tight);
+}
+
+@media (max-width: 593px) {
+  .proof-card__headline {
+    font-size: 32px;              /* fixo — celular, do 593px até 320px (sem novo corte) */
+  }
+}
+
+/* Tags */
+.proof-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.proof-card__tag {
+  display: inline-block;
+  padding: 8px 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.proof-card__tag--outline {
+  background: transparent;
+  border: 1.5px solid rgba(200, 200, 205, 0.55);
+  color: #ffffff;
+}
+
+.proof-card__tag--orange {
+  background: #F06F00;
+  border: 1.5px solid #F06F00;
+  color: #ffffff;
+}
+
+.proof-card__tag--glow {
+  box-shadow: 0 0 6px 1px rgba(240, 111, 0, 0.45), 0 0 12px 2px rgba(240, 111, 0, 0.2);
+}
+
+.proof-card__desc {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 18px;
+  font-weight: 300;
+  line-height: var(--lh-relaxed);
+}
+
+/* ---------- HOW IT WORKS ---------- */
+.steps__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: var(--sp-8);        /* 48px */
+  position: relative;
+}
+
+.step-card {
+  display: flex;
+  align-items: center;
+  padding: var(--sp-6) 0;         /* 32px 0 */
+  border-bottom: 1px solid rgba(255,255,255,0.15); /* era #000 — clareado para o fundo azul escuro da seção */
+  gap: var(--sp-7);                /* 40px */
+  text-align: left;
+  position: relative;
+  z-index: 1;
+}
+
+.steps__grid .step-card:first-child {
+  padding-top: 0;   /* a pedido do usuário (2026-07-09): distância entre o texto "Tudo se resume a
+    3 fases simples..." e o início do bloco "AGENDAMENTO" deve ser 48px (só o margin-top do
+    .steps__grid, sem somar o padding-top de 32px que os outros cards têm) */
+}
+
+.steps__grid .step-card:first-child h3 {
+  margin-top: -7px;  /* compensa a folga natural da fonte (line-height 1.4 num font-size de 64px)
+    que sobra acima da tinta visível da letra "A" de AGENDAMENTO — sem isso, mesmo com o padding-top
+    zerado acima, a distância visual real até a letra ficava em ~55px, não os 48px pedidos. Medido
+    via Playwright (getBoundingClientRect + Range nas letras), não só CSS de cabeça — ver estrutura_secoes.md.
+    Não afeta o alinhamento vertical com o ícone (dentro do próprio h3) nem com o parágrafo ao lado
+    (diferença final <2px, imperceptível). */
+}
+
+.step-card:last-child {
+  border-bottom: none;   /* a linha divisória é só entre os cards — o último não deve ter linha embaixo */
+  padding-bottom: 0;     /* a seção (#sobre / .section) já tem padding-bottom:96px — sem isso, os 32px do card somavam com os 96px da seção, dando 128px no total */
+}
+
+.step-card h3 {
+  flex: 0 0 auto;
+  min-width: 220px;
+}
+
+.step-card p {
+  flex: 1;
+  margin: 0;
+}
+
+.step-card h3 {
+  margin-bottom: var(--sp-2);     /* 8px */
+  color: #ffffff;                 /* era var(--text) (preto) — branco para o fundo azul escuro da seção */
+  font-size: 4rem;                /* 64px */
+  font-weight: 700;                /* mais peso (era 600, herdado do h3 padrão) */
+}
+
+.step-card__square {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: #F06F00;
+  border-radius: var(--radius);
+  vertical-align: middle;
+  margin-right: 40px;
+  position: relative;
+  top: -0.35rem;                  /* mesmo ajuste aplicado ao número e ao texto */
+}
+
+.step-card__square img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+}
+
+.steps__grid .step-card:nth-child(1) .step-card__square img {
+  width: 47%;
+  height: 47%;
+}
+
+.steps__grid .step-card:nth-child(3) .step-card__square img {
+  width: 52%;
+  height: 52%;
+}
+
+.step-card p {
+  font-size: 1rem;                /* 16px */
+  line-height: var(--lh-body);     /* padronizado (era 1.2, caso especial removido — 1.2 é apertado demais pra texto de corpo) */
+  position: relative;
+  top: -0.35rem;                  /* mesmo ajuste aplicado aos números */
+}
+
+#como-funciona .step-card p {
+  color: #ffffff;                 /* branco. Seletor com #id para vencer a regra genérica ".section-heading p" (o wrapper do quadro também usa essa classe) */
+}
+
+/* ---------- TESTIMONIALS (carrossel) ----------
+   Seção normal (não faz parte do scroll-jack do .proof-stats como "5º card" — essa
+   ideia foi tentada e revertida antes, porque um painel full-bleed (inset:0) subindo
+   por cima do conteúdo já visível SEMPRE acaba cobrindo esse conteúdo, não importa o
+   escurecimento; ver histórico no CONTEXTO/memória do projeto).
+
+   Mesmo assim, a pedido do usuário, o texto "A confiança é a maior prova..." agora
+   ACOMPANHA a animação do card "Energia extra" (último card do scroll-jack) em tempo
+   real, com uma distância fixa de 160px entre a base do card e o texto — o mesmo
+   princípio de "trailing a uma distância fixa" que os cards 1-3 usam entre si (ver
+   initScrollCards() em script.js), só que aplicado à seção inteira em vez de a um card.
+
+   Isso é seguro (não repete o bug do "5º card") porque a posição desta seção nunca é
+   definida de forma independente — ela é SEMPRE "posição atual do card-3 + 160px",
+   nunca mais alta que isso. Ou seja, por construção, ela nunca pode subir mais que o
+   card-3 nem cobrir o título/cards acima dele.
+
+   Mecanismo (2 partes, ambas em script.js/initScrollCards) — IMPORTANTE: os 160px são
+   uma distância CONSTANTE desde o primeiro instante em que o texto entra em cena, não
+   uma aproximação gradual (1ª versão fazia o texto "nascer" longe e só chegar a 160px
+   no final — corrigido a pedido do usuário em 2026-07-09, ver [[esteira_alerta]] pra
+   detalhe completo da matemática):
+   1. `margin-top` (calculado 1x, via measureTestimonialsGap(), refeito no resize/
+      troca de fonte): compensa o espaço "morto" que sobra dentro do painel sticky de
+      100vh abaixo do card já assentado (o card não preenche a tela toda) — sem isso,
+      a distância visual real seria de centenas de px mesmo com padding-top:96px fixo,
+      porque esse padding é medido a partir do FIM da caixa sticky de 100vh, não do fim
+      real do card. `margin-top` normalmente fica bem negativo (a seção "sobe" para
+      colar mais perto do fim do scroll-jack), o que é seguro porque o fundo das duas
+      seções é idêntico (#112530) — não há nenhuma emenda visível. Essa parte só vale
+      pro estado de REPOUSO, depois que o scroll-jack libera (progress>=1).
+   2. `transform: translateY(...)` (a cada frame, em update(), só enquanto
+      progress<1): calcula a posição de tela exata que o `.testimonials` precisa ter
+      pra manter 160px da base do card-3 (usando a posição atual do card,
+      `cardBottomOffsetWithinSticky + positions[n-1]`) e cancela o deslocamento
+      natural do scroll — na prática, um "position:fixed" calculado via transform
+      (evita tirar o elemento do fluxo, o que empurraria o conteúdo abaixo/warn-tape
+      durante o scroll-jack). Esse valor converge matematicamente pra 0 exatamente
+      quando progress cruza 1, entregando de forma contínua (sem salto) pro
+      margin-top de repouso do item 1.
+
+   `position:relative` + `z-index:2` (maior que o `z-index:1` do .proof-stats) garante
+   que, no trecho final da animação em que a seção já entra fisicamente na área de tela
+   ocupada pelo painel sticky (só na zona vazia abaixo do card, nunca sobre o card em
+   si — ver ponto acima), ela pinte por cima do fundo do .proof-stats em vez de ficar
+   escondida atrás dele. */
+.testimonials {
+  padding: var(--sp-11) 0; /* 96px topo e base, padrão do site (base inalterada; o topo
+                               é ajustado por cima via margin-top calculado em JS) */
+  background: #112530;
+  position: relative;
+  z-index: 2;
+  will-change: transform;
+}
+
+/* ---------- AVATAR STACK (prova social, 2026-07-09, a pedido do usuário) ----------
+   5 círculos de foto sobrepostos, P&B por padrão, cada um vira colorido no hover (e mostra
+   um selo/balão com um texto sobre a pessoa), + selo "+500 ALUNOS ATENDIDOS" abaixo do grupo.
+   FOTOS E TEXTOS SÃO PLACEHOLDER — ver comentário no HTML (index.html, dentro de
+   #depoimentos) e estrutura_secoes.md pra saber como trocar pelos reais. */
+.avatar-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: var(--sp-7);   /* 40px — espaço até o h2 abaixo */
+}
+
+.avatar-stack__group {
+  display: flex;
+}
+
+.avatar-stack__item {
+  position: relative;
+  width: 76px;                  /* era 64px → 84px → 76px (valor final pedido pelo usuário, 2026-07-09) */
+  height: 76px;
+  border-radius: 50%;
+  margin-left: -26px;           /* sobreposição entre os círculos — era -18px, aumentada
+    a pedido do usuário pra aproximar um pouco mais as fotos */
+  transition: transform 0.55s ease, z-index 0s;   /* mais lenta que o --transition padrão (0.3s),
+    a pedido do usuário (2026-07-09) — duração própria em vez da var global pra não afetar outros elementos */
+}
+
+.avatar-stack__item:first-child { margin-left: 0; }
+
+/* Celular (abaixo de 480px, a pedido do usuário): fotos 10% menores que o padrão
+   (76px → 68.4px). Sobreposição entre os círculos (margin-left) reduzida na mesma
+   proporção (-26px → -23.4px) pra manter a mesma relação visual de sobreposição,
+   em vez de deixá-los se sobrepondo relativamente mais ao encolher. */
+@media (max-width: 479px) {
+  .avatar-stack__item {
+    width: 68.4px;
+    height: 68.4px;
+    margin-left: -23.4px;
+  }
+}
+
+.avatar-stack__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(255,255,255,0.05);   /* borda branca 5% opacidade, a pedido do usuário — espessura aumentada de 2px pra 4px, a pedido do usuário (2026-07-09) */
+  filter: grayscale(1);        /* P&B por padrão — em tablets/celulares (< 1024px) fica
+    sempre assim, já que as regras de :hover abaixo agora só existem a partir de 1024px */
+  transition: filter var(--transition), transform var(--transition);
+}
+
+/* Animação de hover (cor + escala + tooltip) restrita a telas de computador
+   (>= 1024px, breakpoint padrão de tablet do site). Abaixo disso as fotos ficam
+   sempre fixas em P&B, sem nenhuma das regras abaixo — a pedido do usuário, pra
+   evitar também qualquer hover "preso" em toque de tablet/celular. */
+@media (min-width: 1024px) {
+  .avatar-stack__item:hover {
+    z-index: 10 !important;      /* garante que o item em hover fique por cima de todos, mesmo os com z-index maior no HTML */
+    transform: scale(1.18);      /* era 1.08 — aumento maior no hover, a pedido do usuário (2026-07-09) */
+  }
+
+  .avatar-stack__item:hover .avatar-stack__img {
+    filter: grayscale(0);        /* colorida no hover */
+  }
+}
+
+.avatar-stack__tooltip {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #ffffff;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.avatar-stack__tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #ffffff;
+}
+
+@media (min-width: 1024px) {
+  .avatar-stack__item:hover .avatar-stack__tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.avatar-stack__badge {
+  color: #ffffff;      /* sem fundo, a pedido do usuário (2026-07-09) — era var(--teal) */
+  font-family: var(--font-sans);
+  font-size: 14px;     /* era 1rem (16px), ajustado pra 14px exatos a pedido do usuário (2026-07-09) */
+  font-weight: 300;     /* era 700 — mais fina, a pedido do usuário (peso 300 do Roboto já
+    carregado no <link> do Google Fonts, ver .proof-card__desc mais acima) */
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Celular (abaixo de 480px): texto "+500 ALUNOS ATENDIDOS" 10% menor, junto com
+   as fotos acima (14px → 12.6px), a pedido do usuário. */
+@media (max-width: 479px) {
+  .avatar-stack__badge {
+    font-size: 12.6px;
+  }
+}
+
+.testimonials .section-heading {
+  max-width: 1100px;    /* era 680px (padrão de .section-heading) — mais espaço lateral para caber em 2 linhas */
+}
+
+.testimonials .section-heading h2 {
+  color: #ffffff;
+  font-size: 3rem;      /* 48px — era 2.5rem/40px (padrão do h2) */
+  font-weight: 300;     /* mais leve — era 700 (padrão do h2) */
+}
+
+@media (max-width: 1139px) {
+  .testimonials .section-heading h2 {
+    font-size: var(--fs-h1); /* 40px — volta ao tamanho padrão do h2 (era 48px fixo em
+      qualquer largura); mesmo breakpoint de 1140px usado em .proof-stats para consistência
+      entre as dobras que mudam de comportamento em telas de tablet/celular */
+  }
+}
+
+/* Quebra de linha fixa do título "A confiança é a maior prova de que cuidar de pessoas vai
+   muito além de ensinar." — SÓ pra celular (a pedido do usuário, 2026-07-13). De tablet pra
+   cima (>= 594px) o texto continua quebrando naturalmente/fluido, sem nenhum <br> ativo.
+   Abaixo de 594px força exatamente 4 linhas:
+     "A confiança é a maior" / "prova de que cuidar de" / "pessoas vai muito além" / "de ensinar."
+
+   A linha mais larga dessa quebra ("pessoas vai muito além") mede 438,53px a 40px de fonte
+   (medido via Range.getClientRects() no navegador real, mesma técnica do .proof-stats__title).
+   Isso cabe com folga até 488px de tela (440px disponíveis dentro do .container, 24px de
+   padding cada lado) — abaixo disso a linha não cabe mais e quebraria numa 5ª linha extra,
+   desmontando a quebra de 4 linhas pedida. Por isso a fonte encolhe (clamp) só na ponta mais
+   estreita, de 488px até 320px: 40px em 488px, 24,5px em 320px — mesma técnica usada no
+   .proof-stats__title (clamp() só no trecho necessário, nunca fluido no restante da faixa).
+
+   RECÁLCULO (2026-07-13): breakpoint e clamp() recalculados depois que a margem lateral do
+   `.container` voltou de 8px para 24px (ver [[margem_lateral_container]]). Os valores antigos
+   (456px de breakpoint, 27px de fonte mínima) tinham sido calibrados assumindo só 8px de
+   padding — com 24px eles ficariam incorretos e o arranjo de 4 linhas quebraria numa 5ª linha
+   extra em telas estreitas (confirmado via Playwright antes desta correção). */
+.testimonials__title-brk {
+  display: none; /* regra base — sem quebra fixa */
+}
+
+@media (max-width: 593px) {
+  .testimonials__title-brk {
+    display: inline;
+  }
+
+  .testimonials .section-heading h2 {
+    font-size: clamp(24.5px, calc(9.2262vw - 5.024px), 40px);
+  }
+}
+
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);               /* 16px */
+  margin-top: var(--sp-8);        /* 48px */
+}
+
+.carousel-track-container {
+  overflow: hidden;
+  flex: 1;
+}
+
+.carousel-track {
+  display: flex;
+  align-items: center;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;             /* permite scroll vertical da página, mas o
+                                       arrasto horizontal é controlado pelo JS */
+}
+
+.carousel-track.dragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+.carousel-slide {
+  flex: 0 0 auto;
+  /* Tamanho do CARTÃO (.testimonial-frame) voltou a ser exatamente o padrão original
+     (min(368px, 82vw) de slide, com 16px de padding) — o usuário não quis o card menor,
+     só menos distância entre eles. Pra isso, com o padding reduzido de 16px pra 4px
+     (var(--sp-1), "regra do 8"), a largura do SLIDE precisa aumentar na mesma proporção
+     pra sobrar exatamente o mesmo espaço interno de antes pro cartão:
+       largura do cartão = largura do slide − 2×padding
+       336px + 2×4px = 344px  (era 336px + 2×16px = 368px, o teto original)
+       82vw − 32px + 2×4px = 82vw − 24px  (era 82vw − 32px, a parte não travada no teto)
+     min(368px, 82vw) − 32px + 8px  =  min(344px, calc(82vw - 24px))
+     Resultado: o cartão renderiza no MESMO tamanho de antes em qualquer largura de tela
+     (conferido via Playwright: 230,4px/275,5px/296px/336px em 320/375/400/480px+, idêntico
+     ao valor original), só que agora com 4px de respiro em vez de 16px — sobra bem mais
+     espaço dentro do .carousel-track-container pro depoimento vizinho aparecer. */
+  width: min(344px, calc(82vw - 24px));
+  padding: 0 var(--sp-1);         /* 0 4px — era var(--sp-4)/16px, a pedido do usuário
+    ("diminua a distância, mas volte o tamanho ao padrão"); ver cálculo acima. Mesmo valor
+    de padding já usado no breakpoint de desktop/tablet abaixo (var(--sp-1)). */
+  box-sizing: border-box;
+  transform: scale(0.82);
+  opacity: 0.45;
+  filter: blur(2px);              /* depoimentos não centralizados ficam desfocados */
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease, filter 0.5s ease;
+}
+
+@media (min-width: 768px) {
+  .carousel-slide {
+    /* Desktop: reduz o espaçamento entre depoimentos, aproximando os laterais
+       do centro. A moldura (.testimonial-frame) continua com max-width: 336px,
+       então basta encolher a largura do slide (368→344) junto com o padding
+       (16→4) para que ela continue preenchendo o slide sem sobra de espaço. */
+    width: 344px;
+    padding: 0 var(--sp-1);       /* 0 4px */
+  }
+}
+
+.carousel-slide.is-active {
+  transform: scale(1);
+  opacity: 1;
+  filter: blur(0);
+}
+
+.testimonial-frame {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 336px;               /* 42×8px */
+  aspect-ratio: 2/3;               /* meio-termo entre 9/16 e 3/4 */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);               /* 16px */
+  color: var(--gray-light);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.testimonial-frame span {
+  font-size: var(--fs-sm);        /* 14px */
+  letter-spacing: 0.05em;
+  color: var(--gray-light);
+}
+
+.testimonial-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  -webkit-user-drag: none;         /* evita o "arrastar imagem" nativo do navegador
+                                       durante o arrasto do carrossel */
+}
+
+.carousel-arrow {
+  width: 48px;                    /* 6×8px */
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-light);
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: var(--fs-h3);        /* 24px */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  flex-shrink: 0;
+  box-shadow: var(--shadow);
+}
+
+.carousel-arrow svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* Setas só em telas grandes de computador (>= 1024px, mesmo breakpoint de
+   tablet usado em .avatar-stack) — a pedido do usuário, 2026-07-13. Nessa
+   faixa elas ficam escondidas e só aparecem ao passar o mouse por qualquer
+   ponto da faixa do carrossel (comportamento original, inalterado). */
+@media (min-width: 1024px) {
+  .carousel-arrow {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .carousel-wrapper:hover .carousel-arrow {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Tablet e celular (< 1024px): setas removidas por completo — só resta a
+   funcionalidade de arrastar/deslizar com o dedo (pointerdown/up em
+   script.js, independente das setas), a pedido do usuário. */
+@media (max-width: 1023px) {
+  .carousel-arrow {
+    display: none;
+  }
+
+  /* Full-bleed do carrossel de depoimentos — a pedido do usuário, 2026-07-13:
+     o .container (24px de padding lateral, ver [[margem_lateral_container]])
+     estava "cortando" a visualização dos depoimentos vizinhos (laterais), que
+     só apareciam como uma fina tarja de cor bem na borda da tela (o card
+     ativo, escalado a 82% via .carousel-slide, sobra pouco espaço dentro do
+     .carousel-track-container pra mostrar o vizinho, e esse espaço acaba no
+     limite do .container). Pedido: os depoimentos laterais devem "ignorar o
+     container" e ultrapassá-lo, indo borda a borda da janela (100vw).
+     Escopo: só abaixo de 1024px (onde as setas já ficam escondidas, ver regra
+     acima) — no desktop nada muda, porque lá .carousel-wrapper ainda tem as
+     setas como filhas flex ao lado da faixa, e esticar o wrapper todo jogaria
+     as setas pras bordas da janela (fora do escopo pedido).
+     Técnica: "full bleed" clássico — como .carousel-wrapper já é
+     position:relative (regra base acima), basta deslocar o elemento pro
+     centro exato da JANELA (left:50%) e puxar de volta por metade da largura
+     da janela (margin-left:-50vw), com width:100vw. Funciona sem gerar barra
+     de rolagem horizontal porque o <body> não tem padding lateral e já tem
+     overflow-x:clip (ver body no topo do arquivo).
+     Nenhuma mudança de JS foi necessária: a centralização do slide ativo
+     (computeOffset() em script.js) mede a largura REAL do
+     .carousel-track-container via getBoundingClientRect() a cada resize,
+     então ela se readapta sozinha pra nova largura (100vw) automaticamente. */
+  .carousel-wrapper {
+    left: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+  }
+}
+
+.carousel-arrow:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(239,140,10,0.3);
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);               /* 8px */
+  margin-top: var(--sp-6);        /* 32px */
+}
+
+.dot {
+  width: 8px;                     /* 1×8px */
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gray);        /* cinza escuro — estado padrão, mouse fora da seção */
+  cursor: pointer;
+  transition: all var(--transition);
+  padding: 0;
+}
+
+.dot.active {
+  background: var(--orange);
+  transform: scale(1.5);
+}
+
+/* Ao passar o mouse sobre a faixa do carrossel (mesma área que ativa as
+   setas), as bolinhas (exceto a ativa, que já fica laranja) "brilham" para
+   o cinza claro. O botão "Desejo me inscrever agora" fica fora dessa área
+   e não participa dessa animação. */
+.carousel-wrapper:hover ~ .carousel-dots .dot:not(.active) {
+  background: var(--gray-light);
+}
+
+.testimonials__subscribe {
+  text-align: center;
+  margin-top: var(--sp-6);        /* 32px — distância padrão botão→elemento acima (era 40px) */
+}
+
+/* ---------- ESTEIRA DE ALERTA (entre Depoimentos e "Mentiram para você!") ----------
+   3 faixas empilhadas: listras (topo) / texto (meio, fundo amarelo) / listras (base, idêntica ao topo).
+   As 3 rodam com a MESMA velocidade real em px/s (validado com o usuário via medição, não só duração
+   de animação igual — texto e listras percorrem distâncias bem diferentes por ciclo, então cada uma
+   tem uma duration própria calculada pra bater a mesma velocidade final: 32px/s). */
+.warn-tape {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  background: #112530; /* mesma cor de fundo do .testimonials logo acima — cobre a
+    linha fina clara que aparecia entre as duas: .testimonials tem um transform
+    (translateY) recalculado a cada frame via JS pra acompanhar o card "Energia
+    extra" (ver measureTestimonialsGap()/initScrollCards() em script.js), e valores
+    de transform em subpixel (ex: 0.03px) podem deixar uma frestazinha entre a
+    camada composta (GPU layer, por causa do will-change:transform) e o próximo
+    elemento no fluxo normal, revelando o fundo da página (--page-bg, quase branco)
+    por trás. Com o próprio .warn-tape já tendo o mesmo tom escuro no fundo, a
+    frestazinha (se acontecer) fica invisível em vez de aparecer como linha branca. */
+  margin-top: -1px; /* sobrepõe 1px no .testimonials de propósito, fechando de vez
+    qualquer gap de subpixel independente de arredondamento do navegador */
+}
+
+.warn-tape__stripes {
+  height: 10px;
+  overflow: hidden;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #FFC400 0, #FFC400 25%,
+    var(--text) 0, var(--text) 50%
+  );
+  background-size: 28px 28px;
+  animation: warn-stripes-move 0.875s linear infinite; /* 28px (1 ladrilho) ÷ 32px/s = 0.875s, pra bater com a velocidade do texto */
+}
+@keyframes warn-stripes-move {
+  from { background-position: 0 0; }
+  to   { background-position: -28px 0; }  /* negativo = anda pra esquerda, mesma direção do texto */
+}
+
+.warn-tape__body {
+  background: #FFC400;
+  overflow: hidden;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+}
+
+.warn-tape__track {
+  display: flex;
+  align-items: center;
+  gap: 28px;   /* mesmo valor entre todos os elementos (texto e estrela) — espaço igual dos dois lados da estrela */
+  white-space: nowrap;
+  animation: warn-scroll 120.03s linear infinite; /* 48 repetições ("Atenção ✦") somam ~7682px de track (medido com a fonte real Montserrat 800 carregada); metade disso (translateX -50%) ÷ 32px/s = 120.03s */
+  will-change: transform;
+}
+@keyframes warn-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.warn-tape__item {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-serif);   /* Montserrat */
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.warn-tape__sep {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+/* ---------- OFFER ---------- */
+
+/* Bloco de oferta redesenhado em 2 colunas (2026-07-08, a pedido do usuário, inspirado numa imagem de
+   referência de outro site fitness): à esquerda headline + parágrafo curto + checklist com os 6 tópicos
+   + destaque "AULA 100% GRATUITA" + CTA; à direita um espaço reservado para a foto (o usuário vai subir
+   depois uma imagem de uma pessoa fazendo Pilates) com 2 cards flutuantes animados por cima mostrando
+   informação relevante (conteúdo ainda placeholder, marcado "[exemplo]" — trocar quando o usuário definir).
+   Substitui o formato anterior "ticket/cupom + pills" (histórico documentado em estrutura_secoes.md).
+   Fundo: mantido o mesmo fundo claro com manchas pastel já usado na seção (.faq__mesh-bg) — o usuário foi
+   explícito que NÃO queria o fundo escuro/azul da imagem de referência, só o layout. */
+.offer-redesign {
+  max-width: 1100px;               /* alinhado à largura "cheia" usada em outros blocos do site */
+  margin: 0 auto;                  /* headline "Venha conhecer o Sollo Pilates" foi removida — sem respiro extra, usa só o padding-top de 96px da .faq */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;                       /* validado no preview aprovado pelo usuário */
+  align-items: start;               /* era center, depois stretch — ver comentário longo em
+    .offer-photo__slot abaixo: "mesma altura vertical que .offer-info" agora é feito via JS
+    (medição real da altura renderizada), não mais via CSS stretch. "start" aqui é só o
+    estado ANTES do JS rodar (efeito só visível por uma fração de segundo no load). */
+}
+
+@media (max-width: 864px) {
+  .offer-redesign {
+    grid-template-columns: 1fr;    /* .offer-info ocupa a linha toda */
+  }
+  /* .offer-photo{display:none} correspondente a esta faixa está mais abaixo, logo
+     depois da regra base .offer-photo — precisa vir DEPOIS dela no arquivo pra
+     vencer a cascata (mesma especificidade, quem vem depois no arquivo ganha,
+     independente de estar dentro de @media ou não). Colocar aqui não teria efeito
+     nenhum, pois a regra base é declarada mais adiante e sobrescreveria. */
+
+  .offer-info {
+    /* A pedido do usuário (2026-07-14): depois que a foto some, o conteúdo (título,
+       texto, checklist, botão) deve continuar alinhado à ESQUERDA internamente (o
+       texto em si não vira centralizado), mas o BLOCO inteiro deve ficar centralizado
+       na página em vez de esticar de ponta a ponta da coluna (que ficaria bem larga
+       e esparramada em telas de tablet, ex: ~750-816px de largura). 522px = mesma
+       largura da coluna esquerda no layout original de 2 colunas (ver
+       estrutura_secoes.md) — medido que cabe confortavelmente todo o conteúdo sem
+       forçar quebra de linha (texto "Inclui tudo..." precisa de ~487px, a linha
+       mais larga do título de ~400px, o item mais largo da checklist de ~318px —
+       todos abaixo de 522px, com folga). Na prática, como o bloco não tem largura
+       fixa (só max-width) e ganha margin:auto, ele encolhe pro tamanho do próprio
+       conteúdo (~487px, puxado pelo parágrafo) em vez de esticar até os 522px —
+       resultado: bloco do tamanho exato do conteúdo, centralizado na coluna cheia
+       de .offer-redesign (grid-template-columns:1fr acima), sem afetar o
+       text-align (que continua left, herdado/padrão em todos os elementos filhos).
+
+       REVERTIDO (2026-07-15, pedido do usuário): usuário pediu pra centralizar
+       título/texto/botão (deixando só a checklist descentralizada) mas não gostou do
+       resultado — voltou pra esta versão original (bloco centralizado como caixa,
+       texto interno à esquerda). Ver [[offer_titulo_54px_photo]] na memória do
+       projeto pro histórico completo da tentativa revertida. */
+    max-width: 522px;
+    margin: 0 auto;
+  }
+}
+
+.offer-info__title {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 3.8vw, 3.4rem); /* mesma escala de .proof-stats__title: 35.2px a 54.4px */
+  color: var(--teal);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  white-space: nowrap; /* impede quebra automática dentro de cada trecho separado por <br> no
+    HTML — só quebra exatamente nos 3 pontos definidos ("...ajuda" / "...mais" / "...saudável").
+    Escolha explícita do usuário: manter a fonte grande (até 54.4px, igual .proof-stats__title)
+    mesmo sabendo que em telas muito largas o texto pode ficar mais largo que a coluna de
+    ~522px (metade de .offer-redesign, max-width 1100px) e vazar visualmente sobre a foto ao
+    lado — opção alternativa (reduzir o tamanho máximo pra sempre caber) foi recusada. */
+}
+
+@media (max-width: 864px) {
+  .offer-info__title {
+    white-space: nowrap; /* impede quebra automática dentro de cada trecho — a fonte
+      encolhe em vez disso (fórmula abaixo). Garantido por construção (nowrap), não só
+      por calibração. */
+    width: calc(100vw - 48px); /* Sem isso, a largura de `.offer-info` (e portanto do
+      título, que preenche o pai) fica ambígua bem perto de 522px: o encolhe-pro-conteúdo
+      de `.offer-info` (ver comentário dela acima) considera a largura NATURAL do título
+      sem quebra — que muda com o font-size — como um dos candidatos, então o teto de
+      522px do pai só "trava" (vira sempre 522px) quando essa largura natural excede
+      522px. Perto da transição isso criaria um planalto extra imprevisível. `width`
+      explícita aqui garante que o título sempre contribua mais que 522px pro cálculo do
+      pai, travando o teto do pai em exatamente 522px (mesmo valor de sempre) em toda a
+      faixa 570-864px — e por isso o texto "vaza" visualmente pra direita do bloco
+      (mesmo comportamento já aceito no desktop, ver comentário da regra base acima),
+      sem overflow real na tela (ver fórmula abaixo). Não muda a posição da borda
+      ESQUERDA do título (que segue sendo a borda esquerda de `.offer-info`, com nowrap
+      ou sem) — só estabiliza o cálculo da largura do pai. */
+    font-size: clamp(23.6px, calc(4.4006vw + 20.508px), 54.4px); /* Assim que a foto
+      ("pilates-001.jpg") some (breakpoint 864px), o título volta a 54.4px (tamanho
+      máximo normal, igual `.proof-stats__title`) — e a partir daí encolhe aos poucos
+      conforme a tela encolhe, nunca quebrando linha (ver white-space acima).
+
+      Cálculo (medido com Playwright, fonte real Montserrat 800, letter-spacing -0.01em): a
+      linha mais larga ("O lugar que te ajuda") escala a 11.36359px de largura por 1px de
+      font-size. O espaço disponível pro texto, nesta faixa (570-864px de tela, onde o pai
+      trava em 522px centralizado — ver `width` acima), é `largura_da_tela/2 + 237px`
+      (distância do início do texto, que fica deslocado pra dentro pela centralização do pai
+      de 522px, até a borda direita segura do `.container`). Com ~4px de margem de segurança:
+      font-size = (largura/2 + 237 - 4) / 11.36359 = 0.044006·largura + 20.508 →
+      `calc(4.4006vw + 20.508px)`. O teto de 54.4px trava (`clamp`) essa fórmula a partir de
+      ~770px de tela pra cima — dos 864px (foto acabou de sumir) até ~770px, o título fica
+      "parado" em 54.4px porque ainda cabe com folga; abaixo disso encolhe gradualmente.
+      Abaixo de 570px de tela ver a segunda fórmula, logo abaixo (o pai deixa de travar em
+      522px e passa a ocupar a tela toda, mudando a proporção disponível).
+
+      Verificado com Playwright em larguras de 2 em 2px de 320 a 864px: sempre exatamente 3
+      linhas (nunca uma 4ª linha), nunca corta texto na borda da tela (margem mínima
+      encontrada: ~28px, em 320px) — ver [[offer_titulo_54px_photo]] na memória do projeto
+      pra detalhes completos do método e da verificação.
+
+      Nota: existe um overflow horizontal PRÉ-EXISTENTE e não relacionado (scrollWidth
+      travado em 353px abaixo de ~350px de tela neste mesmo bloco Oferta, já documentado —
+      ver diagnostico_responsividade/oferta_foto_esconde_tablet) — confirmado que esta
+      mudança não altera esse comportamento (idêntico antes/depois). */
+  }
+}
+
+@media (max-width: 570px) {
+  .offer-info__title {
+    font-size: clamp(23.6px, calc(8.8013vw - 4.5768px), 45.6px); /* Continuação da fórmula
+      acima abaixo de 570px de tela: aqui o pai (`.offer-info`) já não trava mais em 522px —
+      a tela toda menos os 48px de padding do `.container` (24px cada lado) já é menor que
+      522px, então o pai ocupa exatamente essa largura, sem sobra nenhuma dos dois lados do
+      título. Por isso a fórmula muda de inclinação aqui (não é mais "largura/2 + 237", é só
+      "largura - 48", já que não há mais centralização com sobra). Com a mesma margem de
+      segurança de ~4px: font-size = (largura - 48 - 4) / 11.36359 = 0.088013·largura - 4.5768
+      → `calc(8.8013vw - 4.5768px)`. As duas fórmulas se encontram exatamente em 570px
+      (~45.6px em ambas — sem salto perceptível na transição). Teto de 45.6px e piso de
+      23.6px são só redes de segurança (a fórmula em si já fica dentro desses limites em
+      570px e 320px respectivamente, dentro de ~0.01px). Mesma verificação via Playwright
+      documentada na regra acima cobre esta faixa também. */
+  }
+}
+
+.offer-info__text {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.7;
+  margin-bottom: 12px;
+  max-width: 46ch;
+}
+
+.offer-checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.offer-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  font-size: var(--fs-base);       /* 16px */
+}
+
+.offer-checklist__check {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.offer-highlight {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+/* ---------- coluna direita: espaço para foto + cards flutuantes ---------- */
+.offer-photo {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: start; /* era stretch — ver comentário em .offer-photo__slot: o alinhamento de
+    altura real agora é feito via JS, não via CSS stretch */
+}
+
+@media (max-width: 864px) {
+  .offer-photo {
+    /* A pedido do usuário (2026-07-14): o texto ".offer-info__text" ("Inclui tudo
+       que você precisa para começar hoje:") passa a quebrar em 2 linhas a partir de
+       ~1075px de largura (medido via Playwright — a coluna de ~518px no grid de 2
+       colunas fica estreita demais pra essa frase numa linha só). Entre 1075-865px
+       essa quebra em 2 linhas é aceita sem mudança (usuário confirmou via
+       AskUserQuestion, 2026-07-14). A partir de ~865px pra baixo, em vez de deixar
+       continuar quebrando, a FOTO É ESCONDIDA por completo (não fica empilhada
+       embaixo do texto como era o comportamento antigo abaixo de 800px) — o texto
+       ganha a largura cheia da coluna (via .offer-redesign{grid-template-columns:1fr}
+       no mesmo breakpoint de 864px, ver acima) e nunca mais precisa quebrar.
+       Confirmado com o usuário: a foto NÃO volta a aparecer em nenhuma largura
+       abaixo disso, nem no celular — esse breakpoint de 864px substituiu o antigo
+       de 800px por completo pra esta seção. Ver script.js (fitOfferPhotoHeight) —
+       o matchMedia de detecção desse breakpoint foi atualizado junto, pra não ficar
+       medindo/aplicando altura inline numa foto que já está escondida via CSS.
+       IMPORTANTE: esta regra precisa vir DEPOIS da regra base .offer-photo acima no
+       arquivo — mesma especificidade, e CSS resolve empate pela ORDEM no arquivo,
+       não por estar dentro de @media. Colocá-la antes da base (como foi tentado
+       inicialmente) não tem efeito nenhum: a regra base declarada depois vence. */
+    display: none;
+  }
+}
+
+.offer-photo__slot {
+  position: relative;
+  width: 100%;            /* estado ANTES do JS medir (ver script.js, fitOfferPhotoHeight) —
+    logo depois do load o JS troca isso pra um height: Npx explícito (medido de .offer-info)
+    + width:auto (derivada por aspect-ratio a partir da altura) */
+  aspect-ratio: 3/4;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  /* Por que não deixamos isso só no CSS (height:100% + align-items:stretch no grid/flex)?
+     Tentamos assim primeiro e criou um bug: com height:100%+aspect-ratio, o navegador usa a
+     LARGURA disponível da coluna (~522px numa tela grande, sem nenhum max-width) pra calcular
+     uma altura "natural" (largura × 4/3 ≈ 696px) — e essa altura natural é usada como a
+     contribuição desta foto pro dimensionamento da ROW do grid, ANTES do stretch entrar em
+     ação. Como 696px normalmente é MAIOR que a altura real do texto (título+subtítulo+
+     tópicos+botão, ~610px no caso reportado), a linha do grid crescia pra caber a FOTO, e o
+     "stretch" então esticava o .offer-info (o texto) pra essa altura maior — resultado: foto
+     ultrapassando o botão por baixo, com espaço vazio sobrando atrás do texto. É um problema
+     circular clássico de CSS (aspect-ratio + % de altura numa grid row cujo tamanho depende
+     do próprio item). A solução robusta (mesmo padrão de measureTestimonialsGap/
+     measureCenterOffset em script.js) é medir a altura REAL renderizada de .offer-info em JS
+     e aplicar como px explícito aqui — sem nenhum cálculo circular do navegador envolvido. */
+}
+.offer-photo__slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- FAQ ---------- */
+.faq {
+  padding-top: var(--sp-11);       /* 96px — padronizado com o resto do site (era 144px = 96+48,
+    a pedido do usuário em 2026-07-09; usuário achou em 2026-07-15 que não estava
+    padronizado com o restante das seções, que usam 96px de padding-top/bottom em
+    TODA a parte, ver .section/.pain/.gallery/.pillars). Padding-BOTTOM continua 144px
+    logo abaixo — esse sim é o respiro extra pedido pro final da página (depois do
+    botão "Fazer pergunta" do FAQ), não mexido aqui. */
+  padding-bottom: calc(var(--sp-11) + 48px);   /* 144px, > 1024px — valor base mantido (pedido
+    do usuário em 2026-07-09). Abaixo disso, ver as 3 faixas decrescentes logo abaixo, a pedido
+    do usuário em 2026-07-15 ("padding entre o botão 'Fazer pergunta' e o rodapé cada vez menor
+    conforme a tela diminui, respeitando a escala de 8pt"). */
+  background: var(--page-bg);
+  position: relative;
+  overflow: hidden;                /* corta o desfoque das manchas nas bordas da seção */
+}
+
+/* Espaço entre o botão "Fazer pergunta" (fim do FAQ) e o rodapé — antes fixo em 144px em
+   qualquer largura; agora decresce em 3 degraus conforme a tela encolhe, todos os valores
+   vindos da escala de 8pt (--sp-*) já usada no resto do site. */
+@media (max-width: 1024px) {
+  .faq { padding-bottom: var(--sp-11); }  /* 96px */
+}
+@media (max-width: 800px) {
+  .faq { padding-bottom: var(--sp-9); }   /* 64px */
+}
+@media (max-width: 480px) {
+  .faq { padding-bottom: var(--sp-8); }   /* 48px */
+}
+
+/* Espaço entre o final do bloco "Oferta" (botão "Agendar aula agora") e o início do
+   FAQ ("Ficou com alguma dúvida?"). Era margin-top:192px inline fixo no HTML (nunca
+   diminuía em telas menores) — usuário achou grande demais (2026-07-15), reduzido pra
+   96/64/48px. Usuário achou que ISSO ficou próximo demais em TODAS as larguras (mesmo
+   dia) — aumentado pra 112/80/64px. Depois pediu 80px (em vez de 64px) especificamente
+   pra celular — faixa de 480px e a de 800px agora coincidem em 80px (mesmo dia). */
+#faq {
+  margin-top: var(--sp-12);        /* 112px */
+}
+@media (max-width: 800px) {
+  #faq { margin-top: var(--sp-10); }  /* 80px */
+}
+@media (max-width: 480px) {
+  #faq { margin-top: var(--sp-10); }  /* 80px — era var(--sp-9)/64px, pedido do usuário */
+}
+
+/* Fundo "mesh gradient": manchas de cor borradas se sobrepondo, no mesmo
+   espírito da referência (fica atrás do conteúdo, que tem z-index maior). */
+.faq__mesh-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.faq__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+}
+
+.faq__blob--1 {
+  width: 420px;
+  height: 420px;
+  top: -160px;
+  left: -100px;
+  background: #a8d8ff;             /* azul pastel */
+  animation: faqFloatA 16s ease-in-out infinite alternate;
+}
+
+.faq__blob--2 {
+  width: 380px;
+  height: 380px;
+  top: -120px;
+  right: 5%;
+  background: #ffd9a8;             /* laranja pastel (era lilás) */
+  animation: faqFloatB 19s ease-in-out infinite alternate;
+  animation-delay: -4s;
+}
+
+.faq__blob--3 {
+  width: 360px;
+  height: 360px;
+  bottom: -180px;
+  left: 15%;
+  background: #ffb787;             /* laranja mais forte (era rosa) */
+  animation: faqFloatC 21s ease-in-out infinite alternate;
+  animation-delay: -9s;
+}
+
+.faq__blob--4 {
+  width: 320px;
+  height: 320px;
+  bottom: -140px;
+  right: -80px;
+  background: #bdf0e0;             /* menta pastel */
+  animation: faqFloatD 17s ease-in-out infinite alternate;
+  animation-delay: -6s;
+}
+
+/* Cada mancha anda de um lado para o outro (e um pouco na vertical) em
+   trajetos e durações diferentes, pra não ficarem sincronizadas. */
+@keyframes faqFloatA {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(90px, 40px); }
+}
+
+@keyframes faqFloatB {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-80px, 50px); }
+}
+
+@keyframes faqFloatC {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(70px, -45px); }
+}
+
+@keyframes faqFloatD {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-90px, -35px); }
+}
+
+.faq__dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7ab8e8;
+  opacity: 0.6;
+}
+
+.faq__dot--1 {
+  top: 12%; left: 8%;
+  animation: faqDotFloatA 9s ease-in-out infinite alternate;
+}
+.faq__dot--2 {
+  top: 20%; right: 12%;
+  animation: faqDotFloatB 11s ease-in-out infinite alternate;
+  animation-delay: -3s;
+}
+.faq__dot--3 {
+  bottom: 15%; right: 25%;
+  animation: faqDotFloatC 8s ease-in-out infinite alternate;
+  animation-delay: -5s;
+}
+.faq__dot--4 {
+  top: 58%; left: 19%;
+  animation: faqDotFloatD 10s ease-in-out infinite alternate;
+  animation-delay: -2s;
+}
+
+@keyframes faqDotFloatA {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(40px, 12px); }
+}
+
+@keyframes faqDotFloatB {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-35px, 18px); }
+}
+
+@keyframes faqDotFloatD {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(30px, -25px); }
+}
+
+@keyframes faqDotFloatC {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(30px, -20px); }
+}
+
+.faq .container {
+  position: relative;
+  z-index: 1;
+}
+
+.faq__sub {
+  font-size: var(--fs-base);      /* 16px */
+  color: var(--gray);
+  line-height: var(--lh-relaxed);
+  max-width: 624px;               /* 78×8px */
+  margin: 0 auto 0;                /* margin-top zerado — o título já dá os 16px via .section-heading h2, evita somar */
+  text-align: center;
+}
+
+.faq__list {
+  max-width: 1100px;               /* alinhado à largura "cheia" usada em outros blocos do site (symptom-accordion, recognition__grid--inline) */
+  margin: var(--sp-8) auto 0;     /* 48px */
+  display: flex;
+  align-items: flex-start;        /* cada coluna cresce por conta própria, sem esticar a outra */
+  gap: var(--sp-6);               /* 32px entre colunas */
+}
+
+/* Cada coluna é sua própria pilha (flex column) — abrir um card altera só
+   a altura da sua coluna, sem empurrar nada na coluna vizinha. */
+.faq__col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);               /* 12px entre as perguntas da mesma coluna */
+}
+
+@media (max-width: 800px) {
+  .faq__list {
+    flex-direction: column;
+    max-width: 768px;
+    gap: var(--sp-3); /* MUDANÇA (2026-07-15, a pedido do usuário): era var(--sp-6)/32px
+      (o gap ENTRE as 2 colunas lado a lado, ver regra base acima) — nessa largura as
+      colunas empilham (viram uma lista visual só, de 6 itens) e esse gap de 32px
+      passava a ser o espaço entre o último item da 1ª coluna e o primeiro da 2ª,
+      maior que o espaço entre os itens DENTRO de cada coluna original (12px,
+      var(--sp-3), gap de .faq__col abaixo) — resultado: um espaçamento visualmente
+      diferente entre "Qual a duração das aulas?" e "Preciso ter preparo físico para
+      começar?" (fronteira das 2 colunas originais) comparado aos outros pares.
+      Igualando os dois a 12px, o espaçamento fica uniforme entre TODOS os 6 itens. */
+  }
+}
+
+.faq__item {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-light);
+  overflow: hidden;
+  transition: box-shadow var(--transition), background var(--transition), border-color var(--transition);
+  box-shadow: var(--shadow);
+}
+
+/* Hover minimalista: só uma sombra levemente mais forte, sem mudar cor,
+   borda ou mover o card */
+.faq__item:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Quando algum card do FAQ está aberto, os fechados esmaecem (fundo, borda
+   e texto) pra dar destaque ao que está aberto — intensidade leve */
+.faq__list.has-open .faq__item:not(.open) {
+  background: #ececed;
+  border-color: #dcdcdd;
+  box-shadow: none;
+}
+
+.faq__list.has-open .faq__item:not(.open) .faq__question {
+  color: #949494;
+}
+
+.faq__list.has-open .faq__item:not(.open) .faq__arrow {
+  color: #adadad;
+}
+
+.faq__list.has-open .faq__item:not(.open):hover .faq__question,
+.faq__list.has-open .faq__item:not(.open):hover .faq__arrow {
+  color: var(--text);
+}
+
+/* Ao passar o mouse num card esmaecido, o fundo volta ao branco original */
+.faq__list.has-open .faq__item:not(.open):hover {
+  background: var(--card-bg);
+  border-color: var(--gray-light);
+}
+
+.faq__question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-4) var(--sp-5); /* 16px topo/base, 24px laterais — card mais fino quando fechado */
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);      /* 16px */
+  font-weight: 400;
+  color: var(--text);
+  gap: var(--sp-4);               /* 16px */
+  transition: color var(--transition);
+}
+
+.faq__item:hover .faq__question { color: var(--orange); }
+.faq__item.open .faq__question { color: var(--orange); }
+
+.faq__arrow {
+  width: 20px;                    /* sem fundo/círculo — só o ícone */
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  flex-shrink: 0;
+  transition: transform var(--transition), color var(--transition);
+}
+
+.faq__item:hover .faq__arrow { color: var(--orange); }
+
+.faq__arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+.faq__item.open .faq__arrow {
+  color: var(--orange);
+  transform: rotate(180deg);
+}
+
+.faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  background: #f9fafb; /* cinza neutro bem clarinho — distingue visualmente a resposta da pergunta (branca), sinalizando que dá pra clicar na pergunta de novo pra fechar */
+  transition: max-height 0.4s ease, padding 0.3s ease;
+}
+
+.faq__item.open .faq__answer { max-height: 200px; }
+
+.faq__answer p {
+  padding: var(--sp-4) var(--sp-5) 20px; /* 16px topo, 24px laterais, 20px base */
+  font-size: var(--fs-base);      /* 16px */
+  color: var(--text);
+  line-height: var(--lh-relaxed);
+}
+
+/* ---------- FINAL CTA ---------- */
+.final-cta {
+  padding: var(--sp-8) 0 0;   /* 48px top, 0 embaixo — o padding-bottom de 96px já vem da seção-mãe (.mid-cta--with-recognition), evitando empilhar padding duas vezes */
+  background: var(--page-bg);
+  text-align: center;
+}
+
+/* Cartão claro dividido em duas colunas: painel de foto (slideshow) à
+   esquerda e conteúdo à direita. Border-radius padronizado com o resto dos
+   cards/painéis do site (var(--radius-md), 16px) — antes era um recorte
+   diagonal "56px 0 56px 0" que não tinha nenhum outro uso no site (o
+   comentário antigo dizia que era um padrão do site, mas não era mais o
+   caso), corrigido a pedido do usuário. O overflow:hidden faz o painel de
+   foto seguir esse recorte também. */
+.final-cta__box {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); /* base de 12 colunas do site */
+  align-items: stretch;
+  text-align: left;
+}
+
+@media (max-width: 800px) {
+  .final-cta__box {
+    grid-template-columns: 1fr;
+  }
+  .final-cta__media,
+  .final-cta__content {
+    grid-column: 1 / -1;   /* ocupa a linha inteira quando o grid vira 1 coluna */
+  }
+}
+
+/* Painel esquerdo: slideshow com 9 fotos empilhadas (todas absolutas, uma em
+   cima da outra) — o script.js troca qual delas tem a classe .is-active a
+   cada 3s, e a transição de opacidade abaixo cria o efeito de fade suave. */
+.final-cta__media {
+  grid-column: span 5;   /* era 0.9fr (~45%); arredondado pra fração exata de 12 */
+  position: relative;
+  min-height: 320px;
+  background: var(--black);   /* era um degradê laranja decorativo (placeholder de antes de ter fotos reais) — aparecia como tonalidade laranja durante o crossfade das 9 fotos, porque o fundo fica visível no meio da transição de opacidade. Trocado por um neutro escuro, que não tinge a transição. */
+  overflow: hidden;
+}
+
+.final-cta__media-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+}
+
+.final-cta__media-img.is-active {
+  opacity: 1;
+}
+
+@media (max-width: 800px) {
+  .final-cta__media {
+    min-height: 200px;
+  }
+}
+
+.final-cta__content {
+  grid-column: span 7;                /* era 1.1fr (~55%); arredondado pra fração exata de 12 */
+  min-width: 0;                       /* impede o item do grid de "estourar" a
+                                          largura por causa do botão sem quebra */
+  padding: var(--sp-9) var(--sp-8);   /* 64px 48px */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.final-cta h2 {
+  max-width: none;
+  margin: 0 0 var(--sp-5);        /* 24px */
+  color: var(--text);
+  line-height: var(--lh-tight);
+}
+
+/* Quebra de linha fixa (já existia no HTML, sem responsividade nenhuma) do título
+   "Quantos momentos incríveis você já deixou de viver por não fazer a escolha certa
+   antes?" — pedido do usuário 2026-07-13: manter essa MESMA quebra de 4 linhas em
+   QUALQUER largura de tela, encolhendo a fonte (nunca deixando quebrar numa 5ª linha).
+
+   A largura disponível pro h2 NÃO é uma função contínua da largura da tela — ela pula
+   3 vezes por causa de mudanças estruturais de layout já existentes nesta seção:
+     1) @media (max-width:480px) já reduz o padding de .final-cta__content (64/48 -> 40/32)
+     2) @media (max-width:800px) já muda .final-cta__box de 2 colunas pra 1 coluna
+     3) .container tem max-width:1140px, então a partir daí a largura do h2 estabiliza (541px)
+   Por isso são 3 clamp()s separados (um por trecho monotônico), cada um medido via busca
+   binária real (mesma técnica de .pain__warning-text/.mid-cta__lead-title): incrementos de
+   0,2px achando a MAIOR fonte que ainda mantém a altura do h2 em exatamente 4 linhas
+   (Math.round(height/lineHeight)), com 0,3px de margem de segurança subtraída em cada um.
+   Acima de 640px (dentro do trecho de 1 coluna) e acima de 1060px (dentro do trecho de 2
+   colunas) o texto já cabe nos 40px padrão — os clamp()s abaixo saturam sozinhos no teto
+   (39,7px) exatamente nesses pontos, então não precisou de mais nenhum breakpoint extra.
+   Acima de 1139px (container no teto de 1140px) nada muda, a fonte já era 40px e a quebra
+   já batia certinho com a pedida (confirmado antes de mexer em qualquer CSS).
+   Verificado com Playwright em TODAS as larguras inteiras de 320 a 1139px: 4 linhas em
+   100% dos casos, sem overflow em nenhuma delas. */
+@media (max-width: 480px) {
+  .final-cta h2 {
+    font-size: clamp(16.5px, calc(8.25vw - 9.9px), 29.7px);
+  }
+}
+
+@media (min-width: 481px) and (max-width: 800px) {
+  .final-cta h2 {
+    font-size: clamp(27.1px, calc(7.9245vw - 11.015px), 39.7px);
+  }
+}
+
+@media (min-width: 801px) and (max-width: 1139px) {
+  .final-cta h2 {
+    font-size: clamp(27.7px, calc(4.6332vw - 9.408px), 39.7px);
+  }
+}
+
+.final-cta h2 .em {
+  color: var(--orange);           /* fora da caixa laranja cheia, o destaque
+                                      agora usa a cor laranja pra continuar
+                                      chamando atenção sobre o fundo claro */
+  font-style: italic;
+}
+
+.final-cta p {
+  font-size: var(--fs-base);      /* 16px */
+  color: var(--gray);
+  max-width: none;
+  margin: 0 0 var(--sp-6);        /* 32px — distância padrão botão→elemento acima (era 40px) */
+  line-height: var(--lh-relaxed);
+}
+
+.final-cta .btn {
+  align-self: flex-start;
+  white-space: normal;   /* em telas estreitas o texto do botão pode quebrar em 2 linhas */
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .final-cta__content {
+    padding: var(--sp-7) var(--sp-6);   /* menos respiro em telas bem estreitas */
+  }
+}
+
+/* ---------- FOOTER ---------- */
+.footer {
+  background: #112530;
+  color: #ffffff;
+  padding: var(--sp-4) 0;         /* 16px — era var(--sp-5)/24px, reduzido a pedido do usuário pra diminuir a altura do rodapé */
+}
+
+.footer__simple {
+  display: flex;
+  flex-direction: column;          /* era row com space-between — agora empilhado, a pedido
+    do usuário, 2026-07-10: os dois textos centralizados na página, um abaixo do outro */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;                        /* era var(--sp-6)/32px (gap horizontal), depois 16px,
+    agora 8px entre as duas linhas — valor exato pedido pelo usuário, 2026-07-10 */
+}
+
+.footer__copy {
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.footer__location {
+  font-size: 12px;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer__location-icon {
+  flex-shrink: 0;
+  margin-right: 5px;
+}
+
+/* ---------- SECTION HEADINGS ---------- */
+.section-heading {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.section-heading h2 {
+  margin-bottom: var(--sp-4);     /* 16px */
+  color: var(--teal);
+}
+
+.section-heading p {
+  font-size: var(--fs-base);      /* 16px */
+  color: var(--gray);
+  line-height: var(--lh-relaxed);
+}
+
+#como-funciona .section-heading {
+  max-width: 900px;                /* era 680px (herdado de .section-heading) — evita quebra de linha */
+}
+
+#como-funciona .section-heading p {
+  font-size: var(--fs-base);      /* 16px */
+  color: #cdd6da;                 /* branco levemente acinzentado */
+  line-height: var(--lh-body);
+  margin-bottom: 0.75rem;         /* espaço entre parágrafos, menor que uma linha em branco */
+}
+
+#como-funciona .section-heading p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- SCROLL ANIMATION ----------
+   Efeito "fade in up" removido por completo a pedido do usuário (2026-07-09), de
+   todas as dobras do site. As regras .reveal/.reveal.visible/.reveal-delay-N (e o
+   IntersectionObserver correspondente em script.js) foram removidas — não só a
+   classe "reveal" do HTML, mas o mecanismo inteiro, pra garantir que o efeito não
+   volte a funcionar mesmo que a classe reapareça em algum elemento por engano numa
+   edição futura (foi exatamente isso que aconteceu antes: a classe reapareceu em
+   alguns elementos de Depoimentos numa edição seguinte, reativando o efeito). */
+
+/* =============================================
+   RESPONSIVE — a ser implementado em etapa futura
+   ============================================= */
+
+/* ---------- HOW IT WORKS (#como-funciona) — responsivo ---------- */
+
+/* Tablet (768px–1139px): mantém o layout em linha (ícone+título à esquerda,
+   texto à direita) — só o font-size do h3 encolhe conforme a tela diminui,
+   em vez do parágrafo quebrar além da quebra manual de 2 linhas que já
+   existe no HTML (<br> entre as duas linhas de cada card). Fórmula calibrada
+   via Playwright (busca binária do maior font-size que mantém as 2 linhas em
+   TODOS os 3 cards, testado a cada 5px de largura) — ver responsividade_plano.md
+   / estrutura_secoes.md no histórico do projeto. Verificado exaustivamente
+   em TODAS as larguras inteiras de 768 a 1139px, sem quebra extra nem estouro. */
+@media (min-width: 768px) and (max-width: 1139px) {
+  .step-card h3 {
+    font-size: clamp(29px, calc(10.32vw - 49.9px), 64px);
+    display: flex;
+    align-items: center;   /* ver nota abaixo */
+  }
+
+  /* O alinhamento vertical do ícone no desktop usa um truque de texto inline
+     (vertical-align:middle no .step-card__square + top:-0.35rem calibrado à
+     mão) que ancora o ícone na LINHA DE BASE do texto do h3. Isso funciona
+     igual em qualquer largura ENQUANTO a fonte fica fixa em 64px — mas aqui a
+     fonte encolhe, e a linha de base desce conforme o texto fica menor,
+     fazendo o ícone (que tem 56px fixos) parecer subir/perder espaço acima
+     dele conforme o título encolhe (bug reportado pelo usuário com print,
+     2026-07-14). Corrigido trocando pra centralização por flexbox (h3 vira
+     flex container, ícone+texto centralizados um em relação ao outro) — isso
+     independe do tamanho da fonte, então o ícone fica sempre no centro
+     vertical do título, do jeito que já era em qualquer largura fixa.
+     Precisa resetar o top:-0.35rem do ícone (calibrado só pro mecanismo
+     antigo) pra não somar um deslocamento extra por cima do centering novo. */
+  .step-card__square {
+    top: 0;
+  }
+
+  /* mesmo motivo: o -7px do h3 do PRIMEIRO card (calibrado pro desktop, ver
+     estrutura_secoes.md) não faz sentido aqui — com h3 em flex, esse -7px só
+     deslocaria o card 1 pra cima em relação aos cards 2/3, sem nenhum ganho
+     (a folga tipográfica que ele compensava é uma particularidade do
+     mecanismo antigo). Resetado só nesta faixa. */
+  .steps__grid .step-card:first-child h3 {
+    margin-top: 0;
+  }
+}
+
+/* Celular (≤767px): layout diferente do tablet — quadrado + título na mesma
+   linha (topo), texto embaixo (numa linha separada), tudo alinhado à
+   esquerda acompanhando a margem lateral do .container. Ícone mantém 56×56px
+   (mesmo tamanho do desktop/tablet), sem numeração nos títulos. Breakpoint de
+   768px não é arbitrário: é onde o cálculo (acima) mostra que mesmo encolhendo
+   o título ao mínimo confortável o layout em linha deixa de caber. Fórmula do
+   título calibrada do mesmo jeito (busca binária, agora só considerando
+   ícone+título numa linha só, sem a restrição do parágrafo do tablet — o
+   parágrafo aqui vai embaixo, em largura cheia). Verificado exaustivamente em
+   TODAS as larguras inteiras de 320 a 767px. */
+@media (max-width: 767px) {
+  .step-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-3);              /* 12px entre a linha do título e o texto */
+  }
+
+  .steps__grid .step-card:first-child {
+    padding-top: var(--sp-6);      /* reseta o ajuste fino calibrado só pro desktop (ver estrutura_secoes.md) */
+  }
+
+  .step-card h3 {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    margin-bottom: 0;
+    font-size: clamp(20px, calc(10.297vw - 12.55px), 40px);
+  }
+
+  .steps__grid .step-card:first-child h3 {
+    margin-top: 0;                 /* reseta o ajuste fino calibrado só pro desktop (-7px) */
+  }
+
+  .step-card__square {
+    margin-right: var(--sp-4);     /* 16px — era 40px no desktop/tablet */
+    top: 0;                        /* reseta o ajuste fino vertical calibrado só pro desktop */
+  }
+
+  .step-card p {
+    top: 0;                        /* reseta o ajuste fino vertical calibrado só pro desktop */
+  }
+
+  .step-card p br {
+    display: none;   /* a quebra manual (<br>) foi calibrada pro texto ficar bem distribuído
+      na coluna ESTREITA ao lado do título, no layout desktop/tablet. No celular o parágrafo
+      passa a ocupar a largura cheia do card (bem mais espaço), então manter o <br> força uma
+      3ª linha extra com "sobra" de 1 palavra sozinha. Escondendo o <br>, o texto quebra
+      naturalmente conforme o espaço disponível (1 a 3 linhas dependendo da largura). Cada
+      <br> tem um espaço literal depois dele no HTML pra não colar as palavras quando escondido
+      (ex: "escolha o<br> melhor" — sem esse espaço viraria "omelhor"). */
+  }
+}
