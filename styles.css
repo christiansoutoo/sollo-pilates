@@ -856,12 +856,20 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
     flex-grow: 1;   /* mesmo valor do card inativo (herdado do `flex: 1 1 ...` base) —
       nenhum card cresce mais que os outros, sem efeito de expansão */
   }
-  .symptom-card__number {
-    color: var(--text);   /* era var(--orange); já nasce preto, não depende mais de .is-active */
+  .symptom-card__number,
+  .symptom-card.is-active .symptom-card__number {
+    color: var(--text);   /* era var(--orange); já nasce preto, não depende mais de .is-active.
+      Selector duplicado com ".symptom-card.is-active" pra igualar a especificidade da regra
+      base (".symptom-card.is-active .symptom-card__number", fora de media query, 3 classes) —
+      sem isso, a regra de 1 classe abaixo perdia pra ela mesmo aqui dentro do media query, e
+      um hover real de mouse (script.js usa mouseenter/mouseleave sem checar largura de tela —
+      acontece em qualquer notebook/desktop com mouse ao encolher a janela abaixo de 1024px)
+      ainda pintava o número de laranja. Corrigido em 2026-07-16. */
     transition: none;
   }
-  .symptom-card__label {
-    color: var(--text);   /* era var(--orange); já nasce preto, não depende mais de .is-active */
+  .symptom-card__label,
+  .symptom-card.is-active .symptom-card__label {
+    color: var(--text);   /* mesmo motivo da regra de .symptom-card__number acima */
     transition: none;
   }
 }
@@ -1396,6 +1404,30 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
       seção (era `background:none`/sem cor de fundo antes) */
     padding: 32px;   /* pedido do usuário, rodada 3: 32px em todos os lados
       (era 24px antes) */
+  }
+}
+
+/* "Kamila Pilates" (h2 dentro de .studio__bio) — pedido do usuário, 2026-07-16: nunca quebrar
+   linha, encolhendo a fonte só quando necessário. font-size movido do inline (era
+   `style="font-size:clamp(2.5rem,4vw,3.1rem)"`) pra esta classe, mesmo motivo documentado acima
+   pro `.studio__img-wrap`/`.studio__grid` — inline nunca perde pra media query sem `!important`.
+   Regra base idêntica ao valor inline original (nada muda em telas >=414px). */
+#sobre .studio__bio-name {
+  font-size: clamp(2.5rem, 4vw, 3.1rem);
+}
+
+/* Abaixo de 414px, "Kamila Pilates" quebrava em 2 linhas com a fonte fixa em 40px (2.5rem) —
+   medido via Playwright com a fonte real (Montserrat 700, auto-hospedada, ver
+   [[fontes_autohospedadas]]): breakpoint exato é 413px quebra / 414px cabe numa linha só
+   (busca binária). Fórmula por 2 pontos ANCORADA EM 414px (não 413px — em 413px o próprio
+   valor de 40px fixo já quebra por ~1px, então a fórmula precisa valer MENOS que 40px bem ali
+   no limite do media query, não exatamente 40px): 40px em 414px de tela (contínuo com a regra
+   base de fora desta faixa, sem "salto" visual) até 27px em 320px de tela (busca binária mediu
+   27,5px como o maior valor que ainda cabe em 320px; 27px garante ~0,5px de margem de
+   segurança). Testado em TODAS as larguras inteiras de 320 a 413px (94 valores), zero quebras. */
+@media (max-width: 413px) {
+  #sobre .studio__bio-name {
+    font-size: clamp(27px, calc(13.829787vw - 17.255319px), 2.5rem);
   }
 }
 
