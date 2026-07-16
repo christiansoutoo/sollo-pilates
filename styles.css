@@ -782,7 +782,35 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
   .symptom-card__photo {
     flex: none;                /* antes flex:1 (esticava pra altura fixa de 320px do container);
       agora cada linha tem altura própria (auto), então a foto precisa de uma altura explícita */
-    height: 240px;
+    aspect-ratio: 1 / 1;       /* pedido do usuário, 2026-07-16: fotos quadradas a partir do
+      momento em que a galeria vira 2 linhas de 3 (era height:240px fixo, um retângulo). A
+      altura passa a acompanhar a largura de cada card (que varia com a tela), sempre 1:1. */
+  }
+  .symptom-card__photo img {
+    left: 0;
+    width: 100%;
+    transform: none;          /* CORREÇÃO, 2026-07-16: a técnica original (largura fixa de
+      460px + centralizada com transform:translateX(-50%), ver comentário acima de
+      .symptom-card__photo img) foi desenhada pro desktop, onde só a CAIXA anima de tamanho
+      (hover) e a altura da foto é sempre 240px fixo — a imagem nunca muda de escala, só o
+      "recorte" (overflow:hidden) muda de largura. Quando a caixa virou quadrada (regra acima),
+      a altura passou a encolher junto com a largura da tela, mas a imagem continuava com
+      largura FIXA em 460px e altura 100% (acompanhando o encolhimento) — o navegador então
+      escalava a imagem pra cobrir uma caixa de proporção cada vez mais larga (460px fixo :
+      altura cada vez menor), ampliando (zoom) progressivamente o centro da foto conforme a
+      tela encolhia, e o resultado ficava cortado/irreconhecível em telas pequenas (ex: só um
+      pedaço de cabelo ou tecido, em vez da foto inteira). Corrigido: imagem com width:100% (em
+      vez de 460px fixo) e sem transform — agora ela sempre preenche exatamente a caixa quadrada
+      (herda height:100% e object-fit:cover da regra base), então o corte final é sempre um
+      recorte centralizado normal da foto original, na mesma proporção da caixa, sem zoom
+      artificial. Só se aplica <=700px — o desktop (com animação real de hover) continua usando
+      a técnica original acima, sem mudança. */
+  }
+  .symptom-card__number {
+    display: none;             /* pedido do usuário, 2026-07-16: números (01, 02...) removidos
+      só nesta faixa (<=700px, quando a galeria já é 2 linhas de 3) — de 701px a 1023px
+      (tablet, ver bloco @media (max-width:1023px) abaixo) os números continuam aparecendo,
+      só que pretos em vez de laranja. */
   }
   .symptom-card__label {
     font-size: 13px;           /* era var(--fs-sm) (14px) — reduzido em 1px pra garantir margem
@@ -802,16 +830,22 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
    (tanto os números... quanto as frases abaixo da imagem)". Nessa faixa, TODAS as fotos ficam
    permanentemente coloridas (sem o preto-e-branco padrão), nenhum card cresce mais que os outros
    ao tocar/segurar, e os números (.symptom-card__number) e rótulos (.symptom-card__label) já
-   nascem na cor laranja, sem precisar do estado `.is-active` pra mudar de cor. Sobrepõe o filtro
-   padrão (`.symptom-card__photo img`, grayscale(1) por padrão), o `flex-grow` do estado
-   `.is-active` herdado do bloco `@media (max-width:700px)` acima, e a cor cinza padrão de
-   número/rótulo — como esse bloco é declarado DEPOIS no arquivo e tem a mesma especificidade
-   das regras base, ele vence em toda a faixa <=700px também, além de cobrir isoladamente
-   701-1023px. O JS em script.js (pointerdown/up/cancel pra touch) continua ativo sem
-   modificação — inofensivo aqui, porque sem diferença visual entre ativo/inativo nessa faixa,
-   alternar a classe `is-active` não tem efeito nenhum. Em 1024px e acima (desktop), nada muda —
-   hover continua expandindo, colorindo a foto e deixando número/rótulo laranja só no card
-   ativo, como antes. */
+   nascem em cor sólida (ver nota de cor abaixo), sem precisar do estado `.is-active` pra mudar
+   de cor. Sobrepõe o filtro padrão (`.symptom-card__photo img`, grayscale(1) por padrão), o
+   `flex-grow` do estado `.is-active` herdado do bloco `@media (max-width:700px)` acima, e a cor
+   cinza padrão de número/rótulo — como esse bloco é declarado DEPOIS no arquivo e tem a mesma
+   especificidade das regras base, ele vence em toda a faixa <=700px também, além de cobrir
+   isoladamente 701-1023px. O JS em script.js (pointerdown/up/cancel pra touch) continua ativo
+   sem modificação — inofensivo aqui, porque sem diferença visual entre ativo/inativo nessa
+   faixa, alternar a classe `is-active` não tem efeito nenhum. Em 1024px e acima (desktop), nada
+   muda — hover continua expandindo, colorindo a foto e deixando número/rótulo laranja só no
+   card ativo, como antes.
+
+   Cor de número/rótulo trocada de laranja pra preta (var(--text)) em 2026-07-16, a pedido do
+   usuário — vale pra toda a faixa <=1023px: de 701 a 1023px (tablet, ainda 1 linha de 6, só sem
+   animação) os números continuam aparecendo, agora pretos; <=700px (galeria já em 2 linhas de
+   3) o número é removido (display:none, ver bloco @media (max-width:700px) acima) e só o
+   rótulo fica preto. */
 @media (max-width: 1023px) {
   .symptom-card__photo img {
     filter: grayscale(0) brightness(1);   /* sempre colorida, nunca preto-e-branco */
@@ -823,12 +857,31 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
       nenhum card cresce mais que os outros, sem efeito de expansão */
   }
   .symptom-card__number {
-    color: var(--orange);   /* já nasce laranja, não depende mais de .is-active */
+    color: var(--text);   /* era var(--orange); já nasce preto, não depende mais de .is-active */
     transition: none;
   }
   .symptom-card__label {
-    color: var(--orange);   /* já nasce laranja, não depende mais de .is-active */
+    color: var(--text);   /* era var(--orange); já nasce preto, não depende mais de .is-active */
     transition: none;
+  }
+}
+
+/* Realinhamento da 6ª foto (Limitações físicas) só na faixa de tablet — pedido do usuário,
+   2026-07-16: nessa faixa (701-1023px, foto ainda retangular, técnica de largura fixa de 460px
+   + centralizada — ver comentário grande em ".symptom-card__photo img" lá em cima) o recorte
+   centralizado padrão cortava a mulher da foto de um jeito ruim (mostrava só uma fatia central
+   estreita). Só pra esta foto, a imagem passa a alinhar mais à direita em vez de centralizada
+   (era left:50%+translateX(-50%), a mesma técnica de todas as outras fotos; virou
+   left:70%+translateX(-70%) só aqui) — desloca a "janela" visível pra revelar mais o lado
+   direito da imagem original (rosto, tronco e bolsa), em vez do centro. Testado nas duas pontas
+   da faixa (701px e 1023px) com a foto real. Fora dessa faixa (<=700px, célula quadrada, ou
+   >=1024px, desktop com hover) a foto 6 continua com o recorte padrão igual às outras 5 —
+   nenhuma das duas usa essa técnica de largura fixa+centralização (ver blocos
+   correspondentes). */
+@media (min-width: 701px) and (max-width: 1023px) {
+  .symptom-card:nth-child(6) .symptom-card__photo img {
+    left: 70%;
+    transform: translateX(-70%);
   }
 }
 
@@ -1042,6 +1095,35 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
   margin-bottom: var(--sp-4);     /* 16px — metade de 32px, a pedido do usuário */
   text-align: left;
   color: var(--text);
+}
+
+/* Encolhimento em telas pequenas pra nunca passar de 2 linhas — pedido do usuário,
+   2026-07-16: "Então, se você está cansada de..." (coluna esquerda) quebrava em 3 linhas
+   em telas estreitas; pediu no máximo 2 linhas, encolhendo a fonte aos poucos, e que
+   "Talvez você já tenha tentado..." (coluna direita) acompanhe o MESMO tamanho pra manter
+   padronização entre as duas. Como as duas frases já usam esta mesma classe
+   `.recognition__title` (uma única regra CSS, sem override por coluna), a padronização já
+   vem de graça — qualquer mudança de fonte aqui vale igual pras duas, sem precisar de
+   seletor por coluna.
+
+   Medição (Playwright, fonte real Montserrat 700 auto-hospedada): a largura da caixa do
+   título (`.recognition__col`, mesma largura pra ambas as colunas) é `viewport - 48px`
+   (48px = padding do `.container`, 24px cada lado) até saturar em 648px quando
+   viewport>=696px. Com a fonte fixa em 40px, "Então, se você está cansada de..." (a mais
+   longa das duas) só cabe em 2 linhas a partir de **389px de tela** — abaixo disso
+   quebrava em 3. Busca binária (30 iterações) confirmou a fonte máxima seguindo 2 linhas
+   em cada largura, praticamente linear (ex: 31,969px em 320px, 40px já em 389px) — clamp()
+   de 2 pontos já basta. Ponto de saturação escolhido em 390px (1px de margem sobre os
+   389px exatos); fonte mínima em 320px escolhida em 31,5px (levemente abaixo do mínimo
+   estritamente necessário de 31,969px, ~2px de margem extra na largura do texto).
+   Verificado exaustivamente em TODAS as larguras inteiras de 320 a 1139px (820 valores)
+   com as 2 frases reais e a fonte real: zero casos de 3+ linhas, e as duas frases sempre
+   com a mesma fonte computada em qualquer largura testada. Acima de 389px nada muda —
+   fica nos mesmos 40px fixos de sempre. */
+@media (max-width: 389px) {
+  .recognition__title {
+    font-size: clamp(31.5px, calc(12.1429vw - 7.3571px), 40px);
+  }
 }
 
 .recognition__item {
@@ -1806,12 +1888,43 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
    "de 8 em 8" (mesma escala tipográfica do site: --fs-h1/h2/h3 = 40/32/24px). Breakpoint
    de 594px reaproveitado do sistema de linhas do título logo acima nesta mesma seção
    (mesmo limite onde o modo empilhado já considera a tela "celular", não mais
-   "tablet"). Não reintroduzir clamp/vw aqui.
+   "tablet").
 
    ATUALIZAÇÃO (2026-07-13): o usuário pediu para remover o segundo degrau (24px
    abaixo de 480px) — o título NÃO deve diminuir mais do que já diminui em 480px.
-   Agora fica fixo em 32px em toda a faixa <= 593px, sem novo corte em 479px. Não
-   reintroduzir o degrau de 24px aqui. */
+   Ficou fixo em 32px em toda a faixa <= 593px, sem novo corte em 479px.
+
+   ATUALIZAÇÃO (2026-07-16): o usuário reportou que "Mais flexibilidade" (o título mais
+   largo dos 4 cards, ver medição abaixo) quebrava em 2 linhas em telas pequenas — o fixo
+   de 32px só cabe sem quebrar a partir de 397px de tela; abaixo disso o texto (269px de
+   largura natural a 32px) não cabe mais no espaço disponível do card (largura do card
+   menos padding, ver fórmula abaixo). Pedido: nenhum título de card pode quebrar linha,
+   e a fonte deve encolher aos poucos pra evitar isso — TODOS os 4 títulos usam a MESMA
+   regra (já é assim, é uma única classe compartilhada, então "padronização" já vem de
+   graça: qualquer mudança de fonte aqui vale igual pros 4). Trocado o `font-size:32px`
+   fixo dentro de `@media(max-width:593px)` por um clamp() que satura em 32px (idêntico
+   ao valor fixo anterior em toda a faixa 400-593px, sem nenhuma mudança visual aí) e só
+   começa a encolher de fato abaixo de ~400px, até 22,5px em 320px.
+
+   Cálculo (medido via Playwright com a fonte real, Montserrat 700 auto-hospedada — ver
+   [[fontes_autohospedadas]]): largura disponível pro texto = largura do card menos
+   padding horizontal (var(--sp-7)=40px de cada lado) = viewport - 128px (confirmado:
+   192px em 320px de tela, 272px em 400px, etc., até saturar em 480px quando o wrapper
+   bate no max-width:560px, viewport>=608px). Título mais largo ("Mais flexibilidade")
+   mede 269px de largura natural a 32px de fonte — por isso só cabe sem quebrar a partir
+   de 397px de tela (269 = 397-128). Busca binária por bisseção (30 iterações, precisão
+   sub-milésimo de px) confirmou a fonte máxima segura em cada largura de tela, batendo
+   quase exatamente com a proporção linear esperada (ex: 22,939px em 320px, 31,989px em
+   396px) — por isso um clamp() linear simples já basta, sem precisar de múltiplos
+   segmentos como em outros títulos deste arquivo. Ponto de saturação escolhido em 400px
+   (não 397px exato) por uma pequena margem de segurança extra (272px disponíveis contra
+   269px necessários = ~3px de sobra). Fórmula por 2 pontos: 32px em 400px de tela, 22,5px
+   em 320px de tela (abaixo do mínimo estritamente necessário de 22,939px, dando ~2,9px de
+   sobra extra na largura do texto). Verificado exaustivamente em TODAS as larguras
+   inteiras de 320 a 593px (274 valores) com as 4 frases reais e a fonte real: zero
+   quebras de linha em qualquer uma. Acima de 593px (bloco `.proof-card__headline` base,
+   fixo 40px) nada mudou — nenhum título quebra nessa faixa mesmo sem clamp (medido: a
+   40px "Mais flexibilidade" precisaria de só ~336px, contra 480-466px disponíveis). */
 .proof-card__headline {
   font-family: var(--font-serif);
   font-size: 40px;                /* fixo — desktop + tablet (>= 594px) */
@@ -1823,7 +1936,10 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
 
 @media (max-width: 593px) {
   .proof-card__headline {
-    font-size: 32px;              /* fixo — celular, do 593px até 320px (sem novo corte) */
+    font-size: clamp(22.5px, calc(11.875vw - 15.5px), 32px);   /* era 32px fixo — agora
+      satura em 32px (idêntico ao valor antigo) de 400px até 593px, e só encolhe de fato
+      abaixo de 400px, até 22,5px em 320px, pra nenhum dos 4 títulos quebrar linha (ver
+      cálculo completo no comentário grande acima). */
   }
 }
 
@@ -2540,19 +2656,28 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
        estrutura_secoes.md) — medido que cabe confortavelmente todo o conteúdo sem
        forçar quebra de linha (texto "Inclui tudo..." precisa de ~487px, a linha
        mais larga do título de ~400px, o item mais largo da checklist de ~318px —
-       todos abaixo de 522px, com folga). Na prática, como o bloco não tem largura
-       fixa (só max-width) e ganha margin:auto, ele encolhe pro tamanho do próprio
-       conteúdo (~487px, puxado pelo parágrafo) em vez de esticar até os 522px —
-       resultado: bloco do tamanho exato do conteúdo, centralizado na coluna cheia
-       de .offer-redesign (grid-template-columns:1fr acima), sem afetar o
-       text-align (que continua left, herdado/padrão em todos os elementos filhos).
+       todos abaixo de 522px, com folga).
 
        REVERTIDO (2026-07-15, pedido do usuário): usuário pediu pra centralizar
        título/texto/botão (deixando só a checklist descentralizada) mas não gostou do
        resultado — voltou pra esta versão original (bloco centralizado como caixa,
        texto interno à esquerda). Ver [[offer_titulo_54px_photo]] na memória do
-       projeto pro histórico completo da tentativa revertida. */
-    max-width: 522px;
+       projeto pro histórico completo da tentativa revertida.
+
+       ATUALIZADO (2026-07-16, pedido do usuário): só o TÍTULO passou a ficar
+       centralizado nesta faixa (texto/checklist/botão já vivem dentro do
+       `.offer-info__panel`, com sua própria centralização — ver esse bloco mais
+       abaixo). Trocado `max-width:522px` (que dependia de um hack no filho
+       `.offer-info__title` — `width:calc(100vw-48px)` — pra "travar" o encolhe-pro-
+       conteúdo do grid item exatamente em 522px, ver histórico removido do
+       comentário do título abaixo) por uma largura EXPLÍCITA e determinística:
+       `width: min(522px, calc(100vw - 48px))`. Faz exatamente a mesma coisa (nunca
+       passa de 522px, encolhe pra caber na tela abaixo de ~570px) mas sem depender
+       de nenhum filho pra estabilizar o cálculo — confirmado via Playwright que o
+       resultado é idêntico ao comportamento antigo em toda a faixa 320-864px
+       (mesmos valores de largura, mesma centralização). Isso permitiu remover o
+       hack do título e trocar o alinhamento dele pra center sem quebrar nada. */
+    width: min(522px, calc(100vw - 48px));
     margin: 0 auto;
   }
 }
@@ -2578,19 +2703,18 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
     white-space: nowrap; /* impede quebra automática dentro de cada trecho — a fonte
       encolhe em vez disso (fórmula abaixo). Garantido por construção (nowrap), não só
       por calibração. */
-    width: calc(100vw - 48px); /* Sem isso, a largura de `.offer-info` (e portanto do
-      título, que preenche o pai) fica ambígua bem perto de 522px: o encolhe-pro-conteúdo
-      de `.offer-info` (ver comentário dela acima) considera a largura NATURAL do título
-      sem quebra — que muda com o font-size — como um dos candidatos, então o teto de
-      522px do pai só "trava" (vira sempre 522px) quando essa largura natural excede
-      522px. Perto da transição isso criaria um planalto extra imprevisível. `width`
-      explícita aqui garante que o título sempre contribua mais que 522px pro cálculo do
-      pai, travando o teto do pai em exatamente 522px (mesmo valor de sempre) em toda a
-      faixa 570-864px — e por isso o texto "vaza" visualmente pra direita do bloco
-      (mesmo comportamento já aceito no desktop, ver comentário da regra base acima),
-      sem overflow real na tela (ver fórmula abaixo). Não muda a posição da borda
-      ESQUERDA do título (que segue sendo a borda esquerda de `.offer-info`, com nowrap
-      ou sem) — só estabiliza o cálculo da largura do pai. */
+    text-align: center; /* pedido do usuário, 2026-07-16: título centralizado nesta
+      faixa (foto escondida). Antes o título tinha um `width:calc(100vw-48px)`
+      explícito só pra estabilizar o cálculo de largura do PAI (`.offer-info`) — esse
+      hack foi removido porque `.offer-info` agora tem uma largura explícita e
+      determinística própria (`width:min(522px,calc(100vw-48px))`, ver comentário
+      dela acima), então o título volta a ser um filho normal (width:auto, preenche
+      o pai) e o `text-align:center` centraliza a linha (nowrap, potencialmente mais
+      larga que os 522px do pai) simetricamente pros dois lados — antes vazava só
+      pra direita (texto alinhado à esquerda), agora o "vazamento" (quando a linha é
+      mais larga que os 522px) fica dividido meio a meio entre esquerda e direita,
+      o que na prática reduz o risco de estourar a tela (metade do vazamento de
+      antes, de cada lado) em vez de aumentar. */
     font-size: clamp(23.6px, calc(4.4006vw + 20.508px), 54.4px); /* Assim que a foto
       ("pilates-001.jpg") some (breakpoint 864px), o título volta a 54.4px (tamanho
       máximo normal, igual `.proof-stats__title`) — e a partir daí encolhe aos poucos
@@ -2599,9 +2723,9 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
       Cálculo (medido com Playwright, fonte real Montserrat 800, letter-spacing -0.01em): a
       linha mais larga ("O lugar que te ajuda") escala a 11.36359px de largura por 1px de
       font-size. O espaço disponível pro texto, nesta faixa (570-864px de tela, onde o pai
-      trava em 522px centralizado — ver `width` acima), é `largura_da_tela/2 + 237px`
-      (distância do início do texto, que fica deslocado pra dentro pela centralização do pai
-      de 522px, até a borda direita segura do `.container`). Com ~4px de margem de segurança:
+      trava em 522px centralizado), é `largura_da_tela/2 + 237px` (distância do início do
+      texto até a borda direita segura do `.container`, quando alinhado à esquerda — fórmula
+      calibrada ANTES da mudança pra center, 2026-07-15). Com ~4px de margem de segurança:
       font-size = (largura/2 + 237 - 4) / 11.36359 = 0.044006·largura + 20.508 →
       `calc(4.4006vw + 20.508px)`. O teto de 54.4px trava (`clamp`) essa fórmula a partir de
       ~770px de tela pra cima — dos 864px (foto acabou de sumir) até ~770px, o título fica
@@ -2609,10 +2733,15 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
       Abaixo de 570px de tela ver a segunda fórmula, logo abaixo (o pai deixa de travar em
       522px e passa a ocupar a tela toda, mudando a proporção disponível).
 
-      Verificado com Playwright em larguras de 2 em 2px de 320 a 864px: sempre exatamente 3
-      linhas (nunca uma 4ª linha), nunca corta texto na borda da tela (margem mínima
-      encontrada: ~28px, em 320px) — ver [[offer_titulo_54px_photo]] na memória do projeto
-      pra detalhes completos do método e da verificação.
+      NÃO precisou recalcular esta fórmula na mudança pra text-align:center (2026-07-16):
+      a fórmula garante que o texto sempre cabe dentro do espaço "largura/2+237" contando a
+      partir do início do texto ALINHADO À ESQUERDA (pior caso, vazamento só de um lado) —
+      com center, o vazamento total é o mesmo, só que dividido pros dois lados, o que é
+      estritamente mais seguro (nunca pode estourar mais do que já cabia antes). Reverificado
+      via Playwright com o text-align:center real em larguras de 2 em 2px, 320-864px: sempre
+      exatamente 3 linhas, título nunca ultrapassa a borda da tela dos dois lados (0 casos de
+      overflow em 272 larguras testadas) — ver [[offer_titulo_54px_photo]] na memória do
+      projeto pra detalhes completos do método original.
 
       Nota: existe um overflow horizontal PRÉ-EXISTENTE e não relacionado (scrollWidth
       travado em 353px abaixo de ~350px de tela neste mesmo bloco Oferta, já documentado —
@@ -2638,6 +2767,66 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
   }
 }
 
+/* Painel branco envolvendo texto + checklist + botão — pedido do usuário, 2026-07-16:
+   "retângulo responsivo branco com sombreamento padrão e bordas arredondadas padrão"
+   (mesma receita de card usada no resto do site — var(--radius-md)/16px +
+   var(--shadow), ver .final-cta__box/.testimonial-frame). O título (.offer-info__title)
+   fica FORA do painel, como estava antes — só o texto "Inclui tudo...", os 6 tópicos
+   e o botão entraram. `align-items:center` centraliza cada um desses 3 blocos
+   HORIZONTALMENTE dentro do painel (nenhum deles tem largura própria — cada um encolhe
+   pro tamanho do próprio conteúdo e fica centralizado, em vez de esticar de ponta a
+   ponta), sem afetar o alinhamento do TEXTO de cada um internamente: o parágrafo ganha
+   text-align:center (pedido explícito), enquanto a lista e o botão continuam com o
+   conteúdo interno alinhado à esquerda (cada linha da checklist é ícone+texto em fileira
+   normal, sem texto centralizado linha a linha) — só a CAIXA da lista, como um bloco
+   único, fica centralizada no painel, exatamente como pedido ("os 6 tópicos devem estar
+   centralizados mas com o alinhamento à esquerda"). Padding responsivo (40px desktop/
+   tablet, 24px abaixo de 480px) pra não sobrar pouco espaço de conteúdo em celulares
+   estreitos (320px de tela = painel de ~272px de largura nessa faixa, ver .offer-info
+   @media(max-width:864px) acima).
+
+   ATUALIZADO 2026-07-16 (pedido do usuário, mesmo dia): o painel branco (fundo/sombra/
+   radius/padding) e as centralizações (`.offer-info__text{text-align:center}`,
+   `.offer-highlight{justify-content:center}`, `.offer-info__panel{align-items:center}`)
+   passaram a existir SÓ na faixa `@media (max-width: 864px)` — exatamente onde a foto
+   "pilates-001" some (ver .offer-photo{display:none} no mesmo breakpoint). Nas telas
+   onde a foto aparece (>864px), o usuário pediu pra voltar ao estado ANTERIOR ao
+   painel: sem retângulo branco nenhum, conteúdo (texto/checklist/botão) simplesmente
+   empilhado dentro de `.offer-info` com alinhamento à esquerda (`.offer-info__panel`
+   vira um `<div>` "invisível" nessa faixa — só `width:100%`, sem nenhum estilo visual,
+   equivalente a não existir). O HTML NÃO mudou (o `<div class="offer-info__panel">`
+   continua envolvendo os 3 blocos em todas as larguras) — só o CSS que dá a aparência
+   de caixa foi restrito à faixa sem foto. Ver [[offer_panel_branco]] pro histórico
+   completo (inclui o motivo do pedido original e a verificação Playwright de quando
+   o painel foi aplicado sem restrição, 2026-07-16 mais cedo). */
+.offer-info__panel {
+  width: 100%;
+  /* Visual de "caixa branca" (fundo/sombra/radius/padding/centralização) só existe na
+     faixa onde a foto some (ver @media max-width:864px abaixo) — ATUALIZADO 2026-07-16
+     (pedido do usuário): nas telas onde a foto "pilates-001" aparece (>864px), o painel
+     volta a ser invisível (sem fundo branco, sem sombra, sem padding), com o conteúdo
+     empilhado normalmente igual estava ANTES do painel existir (ver [[offer_panel_branco]]
+     pro histórico original desse pedido, que tinha sido aplicado sem restrição de faixa). */
+}
+
+@media (max-width: 864px) {
+  .offer-info__panel {
+    background: #fff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+    padding: var(--sp-7);            /* 40px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .offer-info__panel {
+    padding: var(--sp-5);          /* 24px — evita padding desproporcional em telas bem estreitas */
+  }
+}
+
 .offer-info__text {
   color: var(--text);
   font-size: 18px;
@@ -2645,6 +2834,16 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
   line-height: 1.7;
   margin-bottom: 12px;
   max-width: 46ch;
+  /* text-align:center só na faixa sem foto — ver @media max-width:864px abaixo.
+     Nas telas com foto (>864px) volta ao alinhamento original (left/herdado). */
+}
+
+@media (max-width: 864px) {
+  .offer-info__text {
+    text-align: center;            /* pedido do usuário: texto centralizado, com
+      alinhamento centralizado (era herdado/left) — restrito a esta faixa desde
+      2026-07-16 (ver comentário em .offer-info__panel acima). */
+  }
 }
 
 .offer-checklist {
@@ -2661,6 +2860,9 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
   gap: 12px;
   color: var(--text);
   font-size: var(--fs-base);       /* 16px */
+  text-align: left;                /* explícito: cada tópico (ícone+texto) continua lido
+    da esquerda pra direita — só a CAIXA da lista inteira é centralizada no painel
+    (ver .offer-info__panel acima), não o texto de cada linha */
 }
 
 .offer-checklist__check {
@@ -2682,6 +2884,17 @@ h4 { font-size: 1.25rem;        line-height: var(--lh-heading); font-weight: 600
   align-items: center;
   gap: 24px;
   flex-wrap: wrap;
+  /* justify-content:center só na faixa sem foto — ver @media max-width:864px abaixo.
+     Nas telas com foto (>864px) volta ao alinhamento original (left/flex-start). */
+}
+
+@media (max-width: 864px) {
+  .offer-highlight {
+    justify-content: center;       /* botão centralizado (pedido do usuário) — sem efeito
+      hoje (só 1 botão, já centralizado pelo align-items:center do painel-pai), mas
+      garante centralização mesmo se o flex-wrap ativar em telas bem estreitas.
+      Restrito a esta faixa desde 2026-07-16 (ver comentário em .offer-info__panel acima). */
+  }
 }
 
 /* ---------- coluna direita: espaço para foto + cards flutuantes ---------- */
